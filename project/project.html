@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title> Project!!! </title>
+    <link rel="stylesheet" href="css/leaflet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="javascript/util/d3.v3.js"></script>
+	<script type="text/javascript" src="javascript/util/d3-tip.js"></script>
+	<script type="text/javascript" src="javascript/util/topojson.v1.js"></script>
+	<script type="text/javascript" src="javascript/util/leaflet.js"></script>
+	<script type="text/javascript" src="javascript/util/queue.v1.js"></script>
+	<script type="text/javascript" src="javascript/projectpreproc.js"></script>
+	<script type="text/javascript" src="javascript/projectvisual.js"></script>
+	<script>
+	
+	var mapsvg = d3.select("body").append("svg")
+		.attr("width", 760)
+		.attr("height", 660);
+		
+	//call function to load the data)
+	loadData();
+	function ready(error, mapData, hospitalData, zipCodeData) {	
+		if (error) throw error;
+
+		var hospitalIDs = [];
+		
+		var hospitals = {};
+		
+		createHospitalObject(hospitalData, hospitals, hospitalIDs);
+		
+		
+		console.log(hospitalIDs);
+		addDRGdata(hospitals, hospitalData);
+		
+		console.log("after calling addDRGdata we have");
+		console.log(hospitals);
+		
+		addHospitalCoordinates(zipCodeData, hospitals, hospitalIDs);
+		
+		console.log("after calling addHospitalCoordinates we have");
+		console.log(hospitals);
+		
+		createLayout(mapData, hospitals, hospitalIDs);
+	}	
+	</script>
+	</body>
+</html>
