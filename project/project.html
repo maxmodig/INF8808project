@@ -49,11 +49,8 @@
 		createHospitalObject(hospitalData, hospitals, hospitalIDs);
 		
 		
-		console.log(hospitalIDs);
 		addDRGdata(hospitals, hospitalData);
 		
-		console.log("after calling addDRGdata we have");
-		console.log(hospitals);
 		
 		//call this function and the hospitals will be plotted on the map, but it is slow so its not necessary when testing
 		//addHospitalCoordinates(zipCodeData, hospitals, hospitalIDs);
@@ -65,14 +62,240 @@
 		
 		//everything below here is just testing
 		
+		
+		
+		var DRGsvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 100);
+		var providerssvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 700).attr("y", 70);
+		
+		DRGsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 30);
+		providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180);
+		
+			
+		DRGsvg.append('text').text('Uncovered Charges Comparison')
+                .attr('x', 5)
+                .attr('y', 7)
+                .attr('fill', 'black')
+				.attr("font-family", "sans-serif")
+				.style("font-weight","bold")
+                .attr("font-size", "9px");
+
+		
+		DRGsvg.append('text').text('Diagnosis-Related Group')
+                .attr('x', 5)
+                .attr('y', 38)
+                .attr('fill', 'black')
+				.attr("font-family", "sans-serif")
+				.style("font-weight","bold")
+                .attr("font-size", "8px");
+		
+		providerssvg.append('text').text('Providers Coverage')
+				.attr('x', 5)
+				.attr('y', 8)
+				.attr('fill', 'black')
+				.attr("font-family", "sans-serif")
+				.style("font-weight","bold")
+				.attr("font-size", "8px");
+			
+			//avgCC: +parseFloat(hospitalData[i][' Average Covered Charges '].replace(/[$,]+/g,"")),
+			//avgTP: +parseFloat(hospitalData[i][' Average Total Payments '].replace(/[$,]+/g,"")),
+			//avgMP: +parseFloat(hospitalData[i]['Average Medicare Payments'].replace(/[$,]+/g,""))
+		
+		
+		
+		//something weird happens if we choose 178, 208, 603
+		var DRGchoice = 208;
+		
+		
+		
+		/*
+		change names of these if you use them
+		
+		var MINavgCC = 0;
+		var MAXavgCC = 0;
+		var MINavgMP = 0;
+		var MAXavgMP = 0;
+		*/
+		
+		
+		
+		var hospitalWithDRG = [];
+		
+		
+		
+		
+		for (i = 0; i < hospitalIDs.length; i++) {
+			//if (hospitals[hospitalIDs[i]].DRGs[DRGchoice] !== 'undefined') {
+			if (hospitals[hospitalIDs[i]].DRGs[DRGchoice]) {
+				hospitalWithDRG.push({
+					hospitalID: +hospitalIDs[i],
+					avgCC: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgCC,
+					avgMP: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgMP,
+					avgTP: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgTP,
+					discharges: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].discharges				
+				});
+			}
+		}
+		
+		console.log("here is data for the hospitals that provide DRG " + DRGchoice);
+		console.log(hospitalWithDRG);
+		
+		var maxCC = 0;
+		var maxMP = 0;
+		var maxID = 0;
+		
+		for (i = 0; i < hospitalWithDRG.length; i++) {
+			if (+hospitalWithDRG[i].avgCC > +maxCC) {
+				maxCC = +hospitalWithDRG[i].avgCC;
+				maxID = +hospitalWithDRG[i].hospitalID;
+			}
+			if (+hospitalWithDRG[i].avgMP > +maxMP) {
+				maxMP = +hospitalWithDRG[i].avgMP;
+			}
+		}
+		
+		console.log("the maximum covered charges is " + maxCC + " at hospital with ID " + maxID + " and the maximum medicare payments is " + maxMP);
+		
+		console.log(hospitalWithDRG);
+		
+		
+		var leftScale = d3.scale.linear()
+						.domain([0, maxCC])
+						.range([150, 20]);
+						
+		var rightScale = d3.scale.linear()
+						.domain([0, maxMP])
+						.range([150, 20]);				
+
+		
+		console.log(leftScale(100000));
+		
+		console.log(leftScale(60000));
+		
+		console.log(leftScale(0));
+		
+		
+		var leftAxis = providerssvg.append("line")
+						.attr("x1", 10)
+						.attr("y1", 150)
+						.attr("x2", 10)
+						.attr("y2", 20)
+						.attr("stroke-width", 1)
+						.attr("stroke", "black");
+						
+						
+		var rightAxis = providerssvg.append("line")
+						.attr("x1", 165)
+						.attr("y1", 150)
+						.attr("x2", 165)
+						.attr("y2", 20)
+						.attr("stroke-width", 1)
+						.attr("stroke", "black");
+						
+		var bottomAxis = providerssvg.append("line")
+						.attr("x1", 10)
+						.attr("y1", 150)
+						.attr("x2", 165)
+						.attr("y2", 150)
+						.attr("stroke-width", 1)
+						.attr("stroke", "black");
+		
+		providerssvg.selectAll("hospitalline")
+			.data(hospitalWithDRG)
+			.enter()
+				.append("line")
+				.attr("class", "hospitalline")
+				.attr("x1", 10)
+				.attr("y1", function(d) { return leftScale(d.avgCC); })
+				.attr("x2", 165)
+				.attr("y2", function(d) { return leftScale(d.avgMP); })
+				.attr("stroke-width", function(d) { if ((d.avgMP / d.avgCC) > 1) return 1; else return 0.02; })
+				.attr("stroke", function(d) { if ((d.avgMP / d.avgCC) > 1) return "green"; else return "blue"; });
+				
+		providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 180);
+		
+		providerssvg.append('text').text('Best Coverage')
+			.attr('x', 5)
+			.attr('y', 188)
+			.attr('fill', 'black')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "8px");
+			
+		providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 280);
+		
+		providerssvg.append('text').text('Worst Coverage')
+			.attr('x', 5)
+			.attr('y', 288)
+			.attr('fill', 'black')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "8px");	
+			
+			
+		console.log("before calculating bestCoverage");
+		console.log(hospitalWithDRG);
+		console.log(hospitalWithDRG[7].avgMP / hospitalWithDRG[7].avgCC);
+		console.log((hospitalWithDRG[7].avgMP / hospitalWithDRG[7].avgCC));
+		
+			
+		var bestCoverage = [];
+		bestCoverage[1] = 0;
+		
+		
+		for (i = 0; i < hospitalWithDRG.length; i++) {
+			if ((hospitalWithDRG[i].avgMP / hospitalWithDRG[i].avgCC) > bestCoverage[1]) {
+				console.log("found something better at");
+				console.log(hospitalWithDRG[i]);
+				bestCoverage[0] = +hospitalWithDRG[i].hospitalID;
+				bestCoverage[1] = +(hospitalWithDRG[i].avgMP / hospitalWithDRG[i].avgCC);
+			}
+		}
+		
+		console.log("here is best coverage");
+		console.log(bestCoverage);
+		console.log(hospitalWithDRG);
+		console.log(hospitals[bestCoverage[0]]);
+				
+		var worstCoverage = bestCoverage.slice();
+		
+		for (i = 0; i < hospitalWithDRG.length; i++) {
+			if ((hospitalWithDRG[i].avgMP / hospitalWithDRG[i].avgCC) < worstCoverage[1]) {
+				worstCoverage[0] = hospitalWithDRG[i].hospitalID;
+				worstCoverage[1] = (hospitalWithDRG[i].avgMP / hospitalWithDRG[i].avgCC);
+			}
+		}
+				
+		providerssvg.append("rect").attr("fill", "green").attr("height", 30).attr("width", function (d) {if (bestCoverage[1] > 1) return 160; else return bestCoverage[1] * 160; }).attr("y", 220).attr("x", 10);
+		
+		providerssvg.append("rect").attr("fill", "red").attr("height", 30).attr("width", 160 - bestCoverage[1] * 160).attr("y", 220).attr("x", 10 + bestCoverage[1] * 160);
+		
+		
+		providerssvg.append("rect").attr("fill", "green").attr("height", 30).attr("width", worstCoverage[1] * 160).attr("y", 320).attr("x", 10);
+		
+		providerssvg.append("rect").attr("fill", "red").attr("height", 30).attr("width", 160 - worstCoverage[1] * 160).attr("y", 320).attr("x", 10 + worstCoverage[1] * 160);
+		
+		
+
+		
+		
+		
+		/*
+		
+
+		BELOW
+		HERE
+		IS
+		THE 
+		OLD
+		RIGHT-HAND
+		PANEL
+		
+
 		//hospitals and DRGs used for testing
 		var hospitalChoices = [10001, 10055];
 		var DRGchoices = [39, 303, 312];
 		
-		console.log("WÖÖÖÖÖÖÖÖÖÖÖÖÖ");
-		console.log(+parseInt(hospitalData[8]['DRG Definition'], 10));
-		console.log(hospitalData[8]['DRG Definition']);
-		console.log(+DRGchoices[2]);
+		
 		
 		var DRGnames = [];
 		for (i = 0; i < DRGchoices.length; i++) {
@@ -186,7 +409,8 @@
 				.enter()
 					.append("rect")
 					.attr("drg", DRGchoices[i])
-					.attr("height", 10).attr("width", function (d) {return widthScale(hospitals[d].DRGs[DRGchoices[i]].avgCC); }).attr("x", 30).attr("y", function (d,i) {return 30 + i * 15;})
+					.attr("height", 10)
+					.attr("width", function (d) {return widthScale(hospitals[d].DRGs[DRGchoices[i]].avgCC); }).attr("x", 30).attr("y", function (d,i) {return 30 + i * 15;})
 					.on("click", clicked);
 					
 			d3.select("#" + variablename).selectAll("listtext")
@@ -210,7 +434,7 @@
 		function clicked(e) {
 			console.log("total cost of DRG " + d3.select(this).attr("drg") + " at " + hospitals[e].name + " is " + hospitals[e].DRGs[d3.select(this).attr("drg")].avgCC);
 		}
-		
+		*/
 	}	
 	</script>
 	</body>
