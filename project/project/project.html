@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title> Project!!! </title>
+    <link rel="stylesheet" href="css/leaflet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="javascript/util/d3.v3.js"></script>
+	<script type="text/javascript" src="javascript/util/d3-tip.js"></script>
+	<script type="text/javascript" src="javascript/util/topojson.v1.js"></script>
+	<script type="text/javascript" src="javascript/util/leaflet.js"></script>
+	<script type="text/javascript" src="javascript/util/queue.v1.js"></script>
+	<script type="text/javascript" src="javascript/projectpreproc.js"></script>
+	<script type="text/javascript" src="javascript/projectvisual.js"></script>
+	<script type="text/javascript" src="javascript/righthandPanel.js"></script>
+	<script>
+	
+
+	var mapsvg = d3.select("body").append("svg")
+		//.attr("x", 0)
+		//.attr("y", 0)
+		.attr("width", 500)
+		.attr("height", 300);
+	/*
+	var infosvg = d3.select("body").append("svg")
+			//.attr("x", 0)
+			//.attr("y", 300)
+			.attr("width", 700)
+			.attr("height", 200);	
+*/
+	
+	var comparisonsvg = d3.select("body").append("svg")
+		//.attr("x", 550)
+		//.attr("y", 5)
+		.attr("width", 180)
+		.attr("height", 500);
+	
+	
+	//call function to load the data)
+	loadData();
+	function ready(error, mapData, hospitalData, zipCodeData) {	
+		if (error) throw error;
+
+		var hospitalIDs = [];
+		
+		var hospitals = {};
+		
+		createHospitalObject(hospitalData, hospitals, hospitalIDs);
+		
+		
+		addDRGdata(hospitals, hospitalData);
+		
+		
+		//call this function and the hospitals will be plotted on the map, but it is slow so its not necessary when testing other things
+		addHospitalCoordinates(zipCodeData, hospitals, hospitalIDs);
+		
+		console.log("after calling addHospitalCoordinates we have");
+		console.log(hospitals);
+		
+		createLayout(mapData, hospitals, hospitalIDs);
+		
+		addRighthandPanel(comparisonsvg, hospitals, hospitalIDs);
+		
+	}	
+	</script>
+	</body>
+</html>
