@@ -15,6 +15,7 @@
 	<script type="text/javascript" src="javascript/projectpreproc.js"></script>
 	<script type="text/javascript" src="javascript/projectvisual.js"></script>
 	<script type="text/javascript" src="javascript/righthandPanel.js"></script>
+	<script type="text/javascript" src="javascript/bottomPanel.js"></script>
 	<script>
 	
 
@@ -23,13 +24,13 @@
 		//.attr("y", 0)
 		.attr("width", 500)
 		.attr("height", 300);
-	/*
-	var infosvg = d3.select("body").append("svg")
+	
+	var bottomsvg = d3.select("body").append("svg")
 			//.attr("x", 0)
 			//.attr("y", 300)
-			.attr("width", 700)
+			.attr("width", 500)
 			.attr("height", 200);	
-*/
+
 	
 	var comparisonsvg = d3.select("body").append("svg")
 		//.attr("x", 550)
@@ -43,15 +44,18 @@
 	function ready(error, mapData, hospitalData, zipCodeData, hospitals) {	
 		if (error) throw error;
 
-		var hospitalIDs = [];				
+		var hospitalIDs = [];	
+		var DRGlist = [];
 		
-		createHospitalObject(hospitalData, hospitalIDs);
+		createHospitalObject(hospitalData, hospitalIDs, DRGlist);
 										
 		console.log(hospitals);
 		
 		createLayout(mapData, hospitals, hospitalIDs);
 		
 		addRighthandPanel(comparisonsvg, hospitals, hospitalIDs);
+		
+		addBottomPanel(bottomsvg, hospitals, hospitalIDs, DRGlist);
 		
 	}	
 	</script>

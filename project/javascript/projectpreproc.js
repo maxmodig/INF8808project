@@ -7,7 +7,7 @@ function loadData() {
         .await(ready);
 }
 
-function createHospitalObject(hospitalData, hospitalIDs) {
+function createHospitalObject(hospitalData, hospitalIDs, DRGlist) {
 
 	var information = [];
 	
@@ -17,7 +17,10 @@ function createHospitalObject(hospitalData, hospitalIDs) {
 			information.push({
 				name: hospitalData[i]['Provider Name'],
 				zipCode: hospitalData[i]['Provider Zip Code']
-			});
+			});		
+		}
+		if (DRGlist.indexOf(hospitalData[i]['DRG Definition']) == -1) {
+			DRGlist.push(hospitalData[i]['DRG Definition']);
 		}
 	}	
 }
