@@ -4,7 +4,10 @@
 function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 		
 	//DRG that is chosen
-	var DRGchoice = 208;
+	var DRGchoice = 39;
+	
+	console.log("now hospitals looks like this");
+	console.log(hospitals);
 	
 	var DRGsvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 100);
 	var providerssvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 700).attr("y", 70);
@@ -141,8 +144,6 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 	
 	for (i = 0; i < hospitalWithDRG.length; i++) {
 		if ((hospitalWithDRG[i].avgMP / hospitalWithDRG[i].avgCC) > bestCoverage[1]) {
-			console.log("found something better at");
-			console.log(hospitalWithDRG[i]);
 			bestCoverage[0] = +hospitalWithDRG[i].hospitalID;
 			bestCoverage[1] = +(hospitalWithDRG[i].avgMP / hospitalWithDRG[i].avgCC);
 		}
@@ -160,176 +161,34 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 			worstCoverage[1] = (hospitalWithDRG[i].avgMP / hospitalWithDRG[i].avgCC);
 		}
 	}
-			
-	providerssvg.append("rect").attr("fill", "green").attr("height", 30).attr("width", function (d) {if (bestCoverage[1] > 1) return 160; else return bestCoverage[1] * 160; }).attr("y", 220).attr("x", 10);
 	
-	providerssvg.append("rect").attr("fill", "red").attr("height", 30).attr("width", 160 - bestCoverage[1] * 160).attr("y", 220).attr("x", 10 + bestCoverage[1] * 160);
+	//add rectangles for the provider with the best coverage
+	providerssvg.append("rect")
+				.attr("fill", "green")
+				.attr("height", 30)
+				.attr("width", function (d) {if (bestCoverage[1] > 1) return 160; else return bestCoverage[1] * 160; })
+				.attr("y", 220).attr("x", 10);
 	
+	providerssvg.append("rect")
+				.attr("fill", "red")
+				.attr("height", 30)
+				.attr("width", 160 - bestCoverage[1] * 160).attr("y", 220)
+				.attr("x", 10 + bestCoverage[1] * 160);
 	
-	providerssvg.append("rect").attr("fill", "green").attr("height", 30).attr("width", worstCoverage[1] * 160).attr("y", 320).attr("x", 10);
+	//add rectangles for the provider with the worst coverage
+	providerssvg.append("rect")
+				.attr("fill", "green")
+				.attr("height", 30)
+				.attr("width", worstCoverage[1] * 160)
+				.attr("y", 320)
+				.attr("x", 10);
 	
-	providerssvg.append("rect").attr("fill", "red").attr("height", 30).attr("width", 160 - worstCoverage[1] * 160).attr("y", 320).attr("x", 10 + worstCoverage[1] * 160);
+	providerssvg.append("rect")
+				.attr("fill", "red")
+				.attr("height", 30)
+				.attr("width", 160 - worstCoverage[1] * 160)
+				.attr("y", 320)
+				.attr("x", 10 + worstCoverage[1] * 160);
 
 	
 }
-	
-	
-	
-	
-	
-/*
-	
-
-	BELOW
-	HERE
-	IS
-	THE 
-	OLD
-	RIGHT-HAND
-	PANEL
-	
-
-	//hospitals and DRGs used for testing
-	var hospitalChoices = [10001, 10055];
-	var DRGchoices = [39, 303, 312];
-	
-	
-	
-	var DRGnames = [];
-	for (i = 0; i < DRGchoices.length; i++) {
-		for (j = 0; j < hospitalData.length; j++) {
-			if (+parseInt(hospitalData[j]['DRG Definition'], 10) == +DRGchoices[i]) {
-				console.log(hospitalData[j]['DRG Definition']);
-				DRGnames.push(hospitalData[j]['DRG Definition']);
-				break;
-			}
-		}
-	}
-	
-	console.log("testing below");
-
-	//add new SVGs to the right panel. 
-	//providersvg displays the chosen providers
-	//DRGsvg shows the chosen DRGs
-	var providerssvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 100);
-	var DRGsvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 400).attr("y", 100);
-	
-	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 30);
-	DRGsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180);
-	
-	providerssvg.append('text').text('Uncovered Charges Comparison')
-			.attr('x', 5)
-			.attr('y', 15)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.style("font-weight","bold")
-			.attr("font-size", "9px");
-			
-	providerssvg.append('text').text('Providers')
-			.attr('x', 5)
-			.attr('y', 38)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "9px");
-			
-	DRGsvg.append('text').text('Diagnostic - related groups')
-			.attr('x', 5)
-			.attr('y', 7)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "9px");
-			
-	providerssvg.selectAll("listtext")
-		.data(hospitalChoices)
-		.enter()
-			.append("text")
-			.attr("class", "listtext")
-			.attr("y", function(d, i) {
-				return 50 + i * 15;
-			})
-			.attr("x", 6)
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "8px")
-			.text(function(d) {
-				return hospitals[d].name;
-			});
-	
-	DRGsvg.selectAll("listtext")
-		.data(DRGchoices)
-		.enter()
-			.append("text")
-			.attr("class", "listtext")
-			.attr("y", function(d, i) {
-				return 30 + i * 15;
-			})
-			.attr("x", 6)
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "10px")
-			.text(function(d, i) {
-				return DRGnames[i];
-			});
-						
-	
-	//create one SVG for each chosen DRG and append it to DRGsvg
-	for (i = 0; i < DRGchoices.length; i++) {
-		//create a variable that will be used to give an ID to the SVG representing a DRG
-		var variablename = "DRGchoice" + [i];
-		console.log(variablename);
-		DRGsvg.append("svg").attr("height", 100).attr("width", 180).attr("y", DRGchoices.length * 20 + i*100).attr("id", variablename);
-		
-		d3.select("#" + variablename).append("text")
-			.attr("class", "listtext")
-			.attr("y", 20)
-			.attr("x", 70)
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "15px")
-			.text(DRGchoices[i]);
-			
-		//find the maximum cost of the DRG at the different hospitals that have been chosen
-		var maxcost = 0;
-		for (j = 0; j < hospitalChoices.length; j++) {
-			console.log("hello");
-			console.log(hospitals[10001].DRGs);
-			console.log(hospitals[hospitalChoices[j]].DRGs[DRGchoices[i]]);
-			if (hospitals[hospitalChoices[j]].DRGs[DRGchoices[i]].avgCC > maxcost) {
-				console.log("new maxcost is " + hospitals[hospitalChoices[j]].DRGs[DRGchoices[i]].avgCC);
-				maxcost = +hospitals[hospitalChoices[j]].DRGs[DRGchoices[i]].avgCC;
-			}
-		}
-		
-		//create scale so that we can give the rectangles a width depending on the relative costs
-		var widthScale = d3.scale.linear()
-							.domain([0, maxcost])
-							.range([0, 150]);
-				
-		d3.select("#" + variablename).selectAll("rect")
-			.data(hospitalChoices)
-			.enter()
-				.append("rect")
-				.attr("drg", DRGchoices[i])
-				.attr("height", 10)
-				.attr("width", function (d) {return widthScale(hospitals[d].DRGs[DRGchoices[i]].avgCC); }).attr("x", 30).attr("y", function (d,i) {return 30 + i * 15;})
-				.on("click", clicked);
-				
-		d3.select("#" + variablename).selectAll("listtext")
-			.data(hospitalChoices)
-			.enter()
-				.append("text")
-				.attr("class", "listtext")
-				.attr("y", function(d, i) {
-					return 38 + i * 15;
-				})
-				.attr("x", 6)
-				.attr("font-family", "sans-serif")
-				.attr("font-size", "6px")
-				.text(function(d) {
-					console.log(d); return d;
-				});
-	
-	}
-	
-	//click a rectangle to get some information about the data it represents. will be replaced by a tooltip later(?)
-	function clicked(e) {
-		console.log("total cost of DRG " + d3.select(this).attr("drg") + " at " + hospitals[e].name + " is " + hospitals[e].DRGs[d3.select(this).attr("drg")].avgCC);
-	}
-	*/

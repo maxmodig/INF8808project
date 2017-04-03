@@ -40,23 +40,13 @@
 	
 	//call function to load the data)
 	loadData();
-	function ready(error, mapData, hospitalData, zipCodeData) {	
+	function ready(error, mapData, hospitalData, zipCodeData, hospitals) {	
 		if (error) throw error;
 
-		var hospitalIDs = [];
+		var hospitalIDs = [];				
 		
-		var hospitals = {};
-		
-		createHospitalObject(hospitalData, hospitals, hospitalIDs);
-		
-		
-		addDRGdata(hospitals, hospitalData);
-		
-		
-		//call this function and the hospitals will be plotted on the map, but it is slow so its not necessary when testing other things
-		addHospitalCoordinates(zipCodeData, hospitals, hospitalIDs);
-		
-		console.log("after calling addHospitalCoordinates we have");
+		createHospitalObject(hospitalData, hospitalIDs);
+										
 		console.log(hospitals);
 		
 		createLayout(mapData, hospitals, hospitalIDs);
