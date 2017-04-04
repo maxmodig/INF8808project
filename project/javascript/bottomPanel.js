@@ -66,8 +66,8 @@ function addBottomPanel(bottomsvg, hospitals, hospitalIDs, DRGlist) {
 		}
 	}	
 	
-	console.log("at hospital with ID " + hospitalChoice + " we have the following DRGs");
-	console.log(DRGsAtHospital);
+	//console.log("at hospital with ID " + hospitalChoice + " we have the following DRGs");
+	//console.log(DRGsAtHospital);
 	
 	
 	var dischargesArray = [];
@@ -156,6 +156,5 @@ function addBottomPanel(bottomsvg, hospitals, hospitalIDs, DRGlist) {
 	
 	
 	
-	console.log(top5discharges);
-	
+	//console.log(top5discharges);	
 }

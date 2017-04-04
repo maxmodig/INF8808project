@@ -5,7 +5,8 @@ function createLayout(mapData, hospitals, hospitalIDs) {
 		.enter()
 		.append("g");
 
-	var projection = d3.geo.mercator();//.scale(5);//.translate([0,1980]);
+	var projection = d3.geo.albersUsa()
+					.scale(1070);//.translate([0,1980]);
 	var path = d3.geo.path().projection(projection);
 
 	var areas = group.append("path")
@@ -25,20 +26,29 @@ function createLayout(mapData, hospitals, hospitalIDs) {
 			LNG: hospitals[hospitalIDs[i]].LNG
 		});
 	}
-	console.log(hospwithcoord);
+	//console.log(hospwithcoord);
 	
-
+	hospwithcoord = hospwithcoord.filter(function(d)
+	{
+		if(d.LAT == "undefined" || d.LNG == "undefined")
+		{
+			return false;
+		}
+		
+		return true;
+	});
+	
 	mapsvg.selectAll(".circle")
 		.data(hospwithcoord)
 		.enter()
 			.append("circle")
-			.attr("r",0.3)
+			.attr("r", 3)
 			.style("fill", "red")
 			.attr("transform", function(d) { return "translate(" + projection([d.LNG, d.LAT]) + ")";})
 			.on("click", clickFunction);	
 }
 
 function clickFunction(e) {	
-		console.log(this);
-		console.log(e);
+		//console.log(this);
+		//console.log(e);
 }

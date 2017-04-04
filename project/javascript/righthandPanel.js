@@ -3,8 +3,8 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 	//DRG that is chosen
 	var DRGchoice = 313;
 	
-	console.log("now hospitals looks like this");
-	console.log(hospitals);
+	//console.log("now hospitals looks like this");
+	//console.log(hospitals);
 	
 	var frameLineLeft = comparisonsvg.append("line")
 			.attr("x1", 0)
@@ -85,8 +85,8 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 		}
 	}
 	
-	console.log("here is data for the hospitals that provide DRG " + DRGchoice);
-	console.log(hospitalWithDRG);
+	//console.log("here is data for the hospitals that provide DRG " + DRGchoice);
+	//console.log(hospitalWithDRG);
 	
 	var maxCC = 0;
 	var maxTP = 0;
@@ -102,7 +102,7 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 		}
 	}
 	
-	console.log("the maximum covered charges is " + maxCC + " at hospital with ID " + maxID);
+	//console.log("the maximum covered charges is " + maxCC + " at hospital with ID " + maxID);
 		
 	var yScale = d3.scale.linear()
 					.domain([0, maxCC])
@@ -207,9 +207,9 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 		}
 	}
 	
-	console.log("here is best coverage");
-	console.log(bestCoverage);
-	console.log(hospitalWithDRG);
+	//console.log("here is best coverage");
+	//console.log(bestCoverage);
+	//console.log(hospitalWithDRG);
 		
 	var worstCoverage = bestCoverage.slice();
 	
@@ -318,5 +318,5 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 }
 
 function clickFunction (e) {
-	console.log(e);
+	//console.log(e);
 }

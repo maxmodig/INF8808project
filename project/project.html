@@ -3,10 +3,28 @@
 <head>
     <meta charset="utf-8" />
     <title> Project!!! </title>
+	<style>
+		body {
+			padding-top : 100px;
+			padding-bottom : 100px;
+		}
+	</style>
     <link rel="stylesheet" href="css/leaflet.css"/>
     <link rel="stylesheet" href="css/style.css"/>
+	<!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">	
 </head>
 <body>
+
+	<div class="row">
+  		<div class="col-md-9" id="formap"></div>
+  		<div class="col-md-3" id="forrigthbox"></div>
+	</div>
+
+	<div class="row">
+  		<div class="col-md-9" id="forbottom"></div>  		
+	</div>
+
 	<script type="text/javascript" src="javascript/util/d3.v3.js"></script>
 	<script type="text/javascript" src="javascript/util/d3-tip.js"></script>
 	<script type="text/javascript" src="javascript/util/topojson.v1.js"></script>
@@ -16,28 +34,33 @@
 	<script type="text/javascript" src="javascript/projectvisual.js"></script>
 	<script type="text/javascript" src="javascript/righthandPanel.js"></script>
 	<script type="text/javascript" src="javascript/bottomPanel.js"></script>
-	<script>
-	
 
-	var mapsvg = d3.select("body").append("svg")
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+	<script>
+		
+		
+	var mapsvg = d3.select("#formap").append("svg")
 		//.attr("x", 0)
 		//.attr("y", 0)
-		.attr("width", 500)
-		.attr("height", 300);
+		.style("width", "100%")
+		.attr("height", 500);
 	
-	var bottomsvg = d3.select("body").append("svg")
-			//.attr("x", 0)
-			//.attr("y", 300)
-			.attr("width", 500)
-			.attr("height", 200);	
-
-	
-	var comparisonsvg = d3.select("body").append("svg")
+	var comparisonsvg = d3.select("#forrigthbox").append("svg")
 		//.attr("x", 550)
 		//.attr("y", 5)
 		.attr("width", 180)
 		.attr("height", 500);
-	
+
+	var bottomsvg = d3.select("#forbottom")
+					.style("padding-top", "20px")
+					.style("padding-left", "75px")
+					.append("svg")
+					.style("width", "100%")						
+					.attr("height", 200);	
+		
 	
 	//call function to load the data)
 	loadData();
@@ -49,7 +72,7 @@
 		
 		createHospitalObject(hospitalData, hospitalIDs, DRGlist);
 										
-		console.log(hospitals);
+		//console.log(hospitals);
 		
 		createLayout(mapData, hospitals, hospitalIDs);
 		
