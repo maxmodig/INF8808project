@@ -63,18 +63,31 @@
 		
 	
 	//call function to load the data)
+	
+		var projection = d3.geo.albersUsa()
+				.scale(1070);//.translate([0,1980]);
+	var path = d3.geo.path().projection(projection);
+	
+	var centered;
+	var centeredCounty;
+	
+	var zoomlevel = "country";
+	
 	loadData();
-	function ready(error, mapData, hospitalData, zipCodeData, hospitals) {	
+	function ready(error, mapData, countiesMap, hospitalData, zipCodeData, hospitals) {	
 		if (error) throw error;
 
 		var hospitalIDs = [];	
 		var DRGlist = [];
+		var centered = 0;
+		
+
 		
 		createHospitalObject(hospitalData, hospitalIDs, DRGlist);
 										
 		//console.log(hospitals);
 		
-		createLayout(mapData, hospitals, hospitalIDs);
+		createLayout(mapData, countiesMap, hospitals, hospitalIDs);
 		
 		addRighthandPanel(comparisonsvg, hospitals, hospitalIDs);
 		
