@@ -1,7 +1,8 @@
 function loadData() {
     queue()
         .defer(d3.json, "states500.geojson")
-        .defer(d3.csv, "hospitaldata.csv")
+        .defer(d3.json, "counties500.geojson")
+		.defer(d3.csv, "hospitaldata.csv")
 		.defer(d3.csv, "zipcodecoordinates.csv")
 		.defer(d3.json, "hospitals.json")
         .await(ready);

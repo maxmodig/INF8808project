@@ -318,5 +318,5 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 }
 
 function clickFunction (e) {
-	//console.log(e);
+	console.log(e);
 }
