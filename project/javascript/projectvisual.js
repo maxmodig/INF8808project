@@ -1,40 +1,8 @@
-function createLayout(mapData, countiesMap, hospitals, hospitalIDs) {
-	console.log(countiesMap.features);
-	console.log("here is some data about the svg");
-	console.log(mapsvg);
-	console.log(mapsvg.style("width"));
-	console.log(parseFloat(mapsvg.style("height")));
+function createLayout(mapData, countiesMap, hospitals, hospwithcoord) {
 	
 	var width = parseFloat(mapsvg.style("width"));
 	var height = parseFloat(mapsvg.style("height"));
-    
-
-	
-	var g = mapsvg.append("g");
-	
-	var hospwithcoord = [];
-	for (i = 0; i < hospitalIDs.length; i++) {
-		hospwithcoord.push({
-			ID: hospitals[hospitalIDs[i]].ID,
-			zipCode: hospitals[hospitalIDs[i]].zipCode,
-			LAT: hospitals[hospitalIDs[i]].LAT,
-			LNG: hospitals[hospitalIDs[i]].LNG,
-			
-		});
-	}
-	
-	
-	hospwithcoord = hospwithcoord.filter(function(d)
-	{
-		if(d.LAT == "undefined" || d.LNG == "undefined")
-		{
-			return false;
-		}
-		
-		return true;
-	});
-	
-				
+    		
 	g.selectAll("statepath")
 		.data(mapData.features)
 		.enter()
@@ -53,32 +21,14 @@ function createLayout(mapData, countiesMap, hospitals, hospitalIDs) {
 		  d3.select(this).attr('opacity', 0.5);
 		})
 		//.on("click", stateClick);
-		.on("click", function(d) { stateClick(d, g, width, height, countiesMap, hospwithcoord); });
+		.on("click", function(d) { stateClick(d, width, height, countiesMap, hospwithcoord, hospitals); });
 		
-				
-	g.selectAll(".hospitalcircle")
-	.data(hospwithcoord)
-	.enter()
-		.append("circle")
-		.attr("class", "hospitalcircle")
-		.attr("cx", function(d) {
-               return projection([d.LNG, d.LAT])[0];
-		})
-		.attr("cy", function(d) {
-               return projection([d.LNG, d.LAT])[1];
-		})
-		.attr("r", 1.5)
-		.style("fill", "red")
-		.on("mouseover", function(d) {
-			d3.select(this).attr("r", 7.5).style("fill", "yellow");
-		})                  
-		.on("mouseout", function(d) {
-			d3.select(this).attr("r", 1.5).style("fill", "red");
-		})
-		.on("click", hospitalClick);		
+	createHospitalCircles(hospwithcoord, hospitals);
+	
+	
 
 		
-	/*
+	/*  un-comment this to be able to zoom with the mousewheel. I think we have too much data to do that, it lags too much
 	var zoom = d3.behavior.zoom()
     .on("zoom",function() {
         g.attr("transform","translate("+ 
@@ -95,12 +45,12 @@ function createLayout(mapData, countiesMap, hospitals, hospitalIDs) {
 			
 }
 
-function stateClick(d, g, width, height, countiesMap, hospwithcoord) {
+function stateClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 	console.log("ENTERING STATECLICK");
 	
 	zoomlevel = "state";
 
-	g.selectAll(".hospitalcircle").remove();
+	
 	g.selectAll(".countypath").remove();
 
 	var x, y, k;
@@ -141,55 +91,28 @@ function stateClick(d, g, width, height, countiesMap, hospwithcoord) {
 			.on("mouseout", function(d) {
 			  d3.select(this).attr('opacity', 0.5);
 			})
-			.on("click", function(d) { countyClick(d, g, width, height, countiesMap, hospwithcoord); });
+			.on("click", function(d) { countyClick(d, width, height, countiesMap, hospwithcoord, hospitals); });
 		
-		
-	g.selectAll(".hospitalcircle")
-	.data(hospwithcoord)
-	.enter()
-		.append("circle")
-		.attr("class", "hospitalcircle")
-		.attr("cx", function(d) {
-               return projection([d.LNG, d.LAT])[0];
-		})
-		.attr("cy", function(d) {
-               return projection([d.LNG, d.LAT])[1];
-		})
-		.attr("r", 0.6)
-		.style("fill", "red")
-		.on("mouseover", function(d) {
-			d3.select(this).attr("r", 3).style("fill", "yellow");
-		})                  
-		.on("mouseout", function(d) {
-			d3.select(this).attr("r", 0.6).style("fill", "red");
-		})
-		.on("click", hospitalClick);
-
+	createHospitalCircles(hospwithcoord, hospitals);	
+	
 	g.transition()
 		.duration(500)
 		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-		.style("stroke-width", 1.5 / k + "px");
-			  
-		
-		
+		.style("stroke-width", 1.5 / k + "px");		
 }
 
-function hospitalClick(e) {
-	console.log(e);
-	
-}
 
-function countyClick(d, g, width, height, countiesMap, hospwithcoord) {
+
+function countyClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 	console.log("ENTERING COUNTYCLICK");
 	
 	var x, y, k;
 	var circleradius;
 	
 	zoomlevel = "county";
-	g.selectAll(".hospitalcircle").remove();
 	
 	
-	//if we click a county other than the one that we are currently zoomed in on
+	//if we click a county other than the one that we are currently zoomed in on, we change focus to that
 	if (centeredCounty !== d.properties.COUNTY) {
 		console.log("we enter the if"); 
 		var centroid = path.centroid(d);
@@ -211,57 +134,142 @@ function countyClick(d, g, width, height, countiesMap, hospwithcoord) {
 		zoomlevel = "country";
 	}
 	
+	
+	createHospitalCircles(hospwithcoord, hospitals);
+	
 	console.log(zoomlevel);
-	if (zoomlevel === "country") {
-	g.selectAll(".hospitalcircle")
-		.data(hospwithcoord)
-		.enter()
-			.append("circle")
-			.attr("class", "hospitalcircle")
-			.attr("cx", function(d) {
-				   return projection([d.LNG, d.LAT])[0];
-			})
-			.attr("cy", function(d) {
-				   return projection([d.LNG, d.LAT])[1];
-			})
-			.attr("r", 1.5)
-			.style("fill", "red")
-			.on("mouseover", function(d) {
-				d3.select(this).attr("r", 7.5).style("fill", "yellow");
-			})                  
-			.on("mouseout", function(d) {
-				d3.select(this).attr("r", 1.5).style("fill", "red");
-			})
-			.on("click", hospitalClick);
-	}
-		
-	else {
-	g.selectAll(".hospitalcircle")
-		.data(hospwithcoord)
-		.enter()
-			.append("circle")
-			.attr("class", "hospitalcircle")
-			.attr("cx", function(d) {
-				   return projection([d.LNG, d.LAT])[0];
-			})
-			.attr("cy", function(d) {
-				   return projection([d.LNG, d.LAT])[1];
-			})
-			.attr("r", 0.2)
-			.style("fill", "red")
-			.on("mouseover", function(d) {
-				d3.select(this).attr("r", 1).style("fill", "yellow");
-			})                  
-			.on("mouseout", function(d) {
-				d3.select(this).attr("r", 0.2).style("fill", "red");
-			})
-			.on("click", hospitalClick);
-	}
-
 	 
 	g.transition()
 		.duration(500)
 		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
 		.style("stroke-width", 1.5 / k + "px");	 
+	
+}
+
+function createHospitalCircles(hospwithcoord, hospitals) {
+	g.selectAll(".hospitalcircle").remove();
+	
+	console.log("this is what hospwithcoord looks like:");
+	console.log(hospwithcoord);
+	
+	//console.log(d3.select("select").property("value"));
+	//console.log("We have chosen another DRG in the menu: " + d3.select("select").property("value") + " aka " + parseInt(d3.select("select").property("value")));
+	
+	
+	var hospitalsToShow = [];
+	
+	if (d3.select("select").property("value") === "All DRGs") {
+		hospitalsToShow = hospwithcoord;
+	}
+	else {
+		for (i = 0; i < hospwithcoord.length; i++) {
+			if (hospitals[hospwithcoord[i].ID].DRGs[parseInt(d3.select("select").property("value"))]) {
+				hospitalsToShow.push(hospwithcoord[i]);
+			}
+		}
+	}
+	
+	console.log("we are displaying " + hospitalsToShow.length + " out of " + hospwithcoord.length + " hospitals");
+	
+	//d3.select("select").property("value")
+	
+	
+	
+	var circleradius;
+		
+	if (zoomlevel == "country") {
+		circleradius = 1.5;
+	}
+	else if (zoomlevel == "state") {
+		circleradius = 0.6;
+	}	
+	else {
+		circleradius = 0.2;
+	}
+
+	g.selectAll(".hospitalcircle")
+		.data(hospitalsToShow)
+		.enter()
+			.append("circle")
+			.attr("class", "hospitalcircle")
+			//.attr("hospitalid", function(d) { return d.ID; })
+			.attr("cx", function(d) {
+				   return projection([d.LNG, d.LAT])[0];
+			})
+			.attr("cy", function(d) {
+				   return projection([d.LNG, d.LAT])[1];
+			})
+			.attr("r", function(d) {if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
+											return circleradius;
+										}
+										else {
+											return circleradius * 2.5;
+										}		
+			})
+			.style("fill", function(d) {if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
+											return "red";
+										}
+										else {
+											return "green";
+										}		
+			})
+			.on("mouseover", function(d) {
+				d3.select(this).attr("r", circleradius * 5).style("fill", "yellow");
+			})                  
+			.on("mouseout", function(d) {if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
+											d3.select(this).attr("r", circleradius).style("fill", "red");
+										}
+										else {
+											d3.select(this).attr("r", (circleradius * 2.5)).style("fill", "green");
+										}		
+			})
+			.on("click", function(d) { if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
+											d3.select(this).attr("r", circleradius * 5).style("fill", "green");
+										}
+										else {
+											d3.select(this).attr("r", circleradius).style("fill", "red");
+										}									
+										hospitalClick(d, hospitals, hospitalIDs); });
+		
+}
+
+
+function hospitalClick(d, hospitals) {
+	console.log(d);
+	bottomsvg.selectAll("svg > *").remove();
+	console.log(d);
+	
+	
+	if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
+		console.log("adding " + parseInt(d.ID) + " to the array");
+		markedHospitals.push(parseInt(d.ID));
+	}
+	else {
+		console.log("removing " + parseInt(d.ID) + " from the array");
+		markedHospitals.splice(markedHospitals.indexOf(parseInt(d.ID)), 1);
+	}
+	
+	console.log("here is markedHospitals");
+	console.log(markedHospitals);
+	
+	console.log("marking::::::: ");
+	if (d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke") == "blue") {
+		console.log(d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke"));
+	}
+	else if (d3.select("#hospitalline" + parseInt(d.ID)) == null) { 
+		console.log("this node is null yo");
+	}
+	
+	if (d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke") == "blue") {
+		d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke-width", 1).attr("stroke", "green");
+	}
+	
+	
+	//the bottom panel displays information about the last hospital that was added to the array (and that hasnt been removed)
+	//for example, we choose in order: a, b, c, d, e. It will display information for each of them until the next one is added.
+	//then we remove b and d. now it still displays info for e. Then we remove e, and it will display info for c
+	
+	addBottomPanel(bottomsvg, hospitals, markedHospitals[markedHospitals.length - 1])
+
 	
 }

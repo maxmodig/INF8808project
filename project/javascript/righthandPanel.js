@@ -1,4 +1,4 @@
-function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
+function addRighthandPanel(comparisonsvg, hospitals) {
 		
 	//DRG that is chosen
 	var DRGchoice = 313;
@@ -165,6 +165,7 @@ function addRighthandPanel(comparisonsvg, hospitals, hospitalIDs) {
 			.append("line")
 			.attr("class", "hospitalline")
 			.attr("x1", 10)
+			.attr("id", function(d) { return "hospitalline" + d.hospitalID; })
 			.attr("y1", function(d) { return yScale(d.avgCC); })
 			.attr("x2", 165)
 			.attr("y2", function(d) { return yScale(d.avgTP); })

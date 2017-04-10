@@ -8,7 +8,7 @@ function loadData() {
         .await(ready);
 }
 
-function createHospitalObject(hospitalData, hospitalIDs, DRGlist) {
+function createHospitalObject(hospitalData) {
 
 	var information = [];
 	
@@ -26,4 +26,28 @@ function createHospitalObject(hospitalData, hospitalIDs, DRGlist) {
 	}	
 }
 
+function createhospwithcoord(hospitals) {
+	var hospwithcoord = [];
+	for (i = 0; i < hospitalIDs.length; i++) {
+		hospwithcoord.push({
+			ID: hospitals[hospitalIDs[i]].ID,
+			zipCode: hospitals[hospitalIDs[i]].zipCode,
+			LAT: hospitals[hospitalIDs[i]].LAT,
+			LNG: hospitals[hospitalIDs[i]].LNG,
+			
+		});
+	}
+	
+		hospwithcoord = hospwithcoord.filter(function(d)
+	{
+		if(d.LAT == "undefined" || d.LNG == "undefined")
+		{
+			return false;
+		}
+		
+		return true;
+	});
+	
+	return hospwithcoord;
+}
 

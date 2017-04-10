@@ -24,6 +24,11 @@
 	<div class="row">
   		<div class="col-md-9" id="forbottom"></div>  		
 	</div>
+	
+	<div class="choixRegion">
+        <label for="region"> DRG: </label>
+        <select id="region" size="1"></select>
+    </div>
 
 	<script type="text/javascript" src="javascript/util/d3.v3.js"></script>
 	<script type="text/javascript" src="javascript/util/d3-tip.js"></script>
@@ -61,11 +66,13 @@
 					.style("width", "100%")						
 					.attr("height", 200);	
 		
+	var g = mapsvg.append("g");
 	
 	//call function to load the data)
 	
-		var projection = d3.geo.albersUsa()
+	var projection = d3.geo.albersUsa()
 				.scale(1070);//.translate([0,1980]);
+				
 	var path = d3.geo.path().projection(projection);
 	
 	var centered;
@@ -73,25 +80,101 @@
 	
 	var zoomlevel = "country";
 	
+	var DRGlist = [];
+	
+	var hospitalIDs = [];
+	var markedHospitals = [];
+	
 	loadData();
+	
 	function ready(error, mapData, countiesMap, hospitalData, zipCodeData, hospitals) {	
 		if (error) throw error;
-
-		var hospitalIDs = [];	
-		var DRGlist = [];
 		var centered = 0;
 		
+		var DRGchoice = 313;
+		
+		createHospitalObject(hospitalData);
+
+		addRighthandPanel(comparisonsvg, hospitals);
+		
+		var hospwithcoord = createhospwithcoord(hospitals);
+		
 
 		
-		createHospitalObject(hospitalData, hospitalIDs, DRGlist);
-										
-		//console.log(hospitals);
+		var optionsList = [];
+		optionsList.push("All DRGs");
+		for (i = 0; i < DRGlist.length; i++) {
+			optionsList.push(DRGlist[i]);
+		}
 		
-		createLayout(mapData, countiesMap, hospitals, hospitalIDs);
 		
-		addRighthandPanel(comparisonsvg, hospitals, hospitalIDs);
+		d3.select("select").selectAll("option")
+			.data(optionsList)
+			.enter()
+			.append("option")
+			.text(function(d) {
+				return d;
+			})
+			
+			
+		d3.select("select").on("change", menuChange);
 		
-		addBottomPanel(bottomsvg, hospitals, hospitalIDs, DRGlist);
+		
+		createLayout(mapData, countiesMap, hospitals, hospwithcoord);
+		
+		
+		//called if we change the dropdown menu. IT RESETS THE ARRAY THAT STORES THE HOSPITALS THAT WE HAVE CLICKED.
+		function menuChange() {
+			console.log("We have chosen another DRG in the menu: " + d3.select("select").property("value") + " aka " + parseInt(d3.select("select").property("value")));
+			markedHospitals = [];
+			bottomsvg.selectAll("svg > *").remove();
+			createHospitalCircles(hospwithcoord, hospitals);
+				
+		}
+		
+//-----------------------------------------------
+		
+		bottomsvg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 0)
+			.attr("x2", 0)
+			.attr("y2", 200)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+					
+		bottomsvg.append("line")
+				.attr("x1", 500)
+				.attr("y1", 0)
+				.attr("x2", 500)
+				.attr("y2", 200)
+				.attr("stroke-width", 2)
+				.attr("stroke", "black");
+				
+		bottomsvg.append("line")
+				.attr("x1", 0)
+				.attr("y1", 0)
+				.attr("x2", 500)
+				.attr("y2", 0)
+				.attr("stroke-width", 2)
+				.attr("stroke", "black");
+				
+		bottomsvg.append("line")
+				.attr("x1", 0)
+				.attr("y1", 200)
+				.attr("x2", 500)
+				.attr("y2", 200)
+				.attr("stroke-width", 2)
+				.attr("stroke", "black");
+			
+		bottomsvg.append('text').text("CLICK ON A HOSPITAL ON THE MAP OR IN THE RIGHT-HAND PANEL TO GET SOME INFORMATION!!!!")
+				.attr('x', 5)
+				.attr('y', 15)
+				.attr('fill', 'red')
+				.attr("font-family", "sans-serif")
+				.style("font-weight","bold")
+				.attr("font-size", "14px");
+		
+	//addBottomPanel(bottomsvg, hospitals, hospitalChoice);
 		
 	}	
 	</script>

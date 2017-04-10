@@ -1,14 +1,13 @@
-function addBottomPanel(bottomsvg, hospitals, hospitalIDs, DRGlist) {
+function addBottomPanel(bottomsvg, hospitals, hospitalChoice) {
 
-	var hospitalChoice = 10113;
 
 	bottomsvg.append("line")
-			.attr("x1", 0)
-			.attr("y1", 0)
-			.attr("x2", 0)
-			.attr("y2", 200)
-			.attr("stroke-width", 2)
-			.attr("stroke", "black");
+		.attr("x1", 0)
+		.attr("y1", 0)
+		.attr("x2", 0)
+		.attr("y2", 200)
+		.attr("stroke-width", 2)
+		.attr("stroke", "black");
 				
 	bottomsvg.append("line")
 			.attr("x1", 500)
@@ -33,6 +32,7 @@ function addBottomPanel(bottomsvg, hospitals, hospitalIDs, DRGlist) {
 			.attr("y2", 200)
 			.attr("stroke-width", 2)
 			.attr("stroke", "black");
+
 			
 	bottomsvg.append('text').text(hospitals[hospitalChoice].name + " (Hospital ID: " + hospitals[hospitalChoice].ID + ")")
 			.attr('x', 5)
@@ -50,12 +50,12 @@ function addBottomPanel(bottomsvg, hospitals, hospitalIDs, DRGlist) {
 			.style("font-weight","bold")
 			.attr("font-size", "10px");
 			
-		bottomsvg.append('text').text("% Average total medicare coverage (number of discharges)")
-			.attr('x', 230)
-			.attr('y', 32)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "7px");
+	bottomsvg.append('text').text("% Average total medicare coverage (number of discharges)")
+		.attr('x', 230)
+		.attr('y', 32)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.attr("font-size", "7px");
 		
 	var DRGsAtHospital = [];
 	
