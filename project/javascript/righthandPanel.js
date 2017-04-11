@@ -1,10 +1,12 @@
 function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
-
+	
+	
+	//Frame around the panel
 	var frameLineLeft = comparisonsvg.append("line")
 			.attr("x1", 0)
 			.attr("y1", 0)
 			.attr("x2", 0)
-			.attr("y2", 500)
+			.attr("y2", 520)
 			.attr("stroke-width", 2)
 			.attr("stroke", "black");
 				
@@ -12,7 +14,7 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 			.attr("x1", 180)
 			.attr("y1", 0)
 			.attr("x2", 180)
-			.attr("y2", 500)
+			.attr("y2", 520)
 			.attr("stroke-width", 2)
 			.attr("stroke", "black");
 			
@@ -26,38 +28,39 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 			
 	var frameLineLeft = comparisonsvg.append("line")
 			.attr("x1", 0)
-			.attr("y1", 500)
+			.attr("y1", 520)
 			.attr("x2", 180)
-			.attr("y2", 500)
+			.attr("y2", 520)
 			.attr("stroke-width", 2)
 			.attr("stroke", "black");
-	
-	
-	var DRGsvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 100);
-	var providerssvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 700).attr("y", 70);
-	
-	DRGsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 30);
-	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180);
 			
-	DRGsvg.append('text').text('Uncovered Charges Comparison')
-			.attr('x', 5)
-			.attr('y', 20)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.style("font-weight","bold")
-			.attr("font-size", "10px");
+			
+	//Text at the top		
+	comparisonsvg.append('text').text('Uncovered Charges Comparison')
+		.attr('x', 5)
+		.attr('y', 18)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "10px");		
+			
+	//First blue rectangle with text
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 30);
 	
-	DRGsvg.append('text').text('Diagnosis-Related Group')
-			.attr('x', 5)
-			.attr('y', 38)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.style("font-weight","bold")
-			.attr("font-size", "8px");
+	comparisonsvg.append('text').text('Diagnosis-Related Group')
+		.attr('x', 5)
+		.attr('y', 37)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "8px");
 	
-	providerssvg.append('text').text('Providers Coverage')
+	//Second blue rectangle with text
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 128);
+			
+	comparisonsvg.append('text').text('Providers Coverage')
 			.attr('x', 5)
-			.attr('y', 8)
+			.attr('y', 136)
 			.attr('fill', 'black')
 			.attr("font-family", "sans-serif")
 			.style("font-weight","bold")
@@ -93,66 +96,69 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 			maxTP = +hospitalWithDRG[i].avgTP;
 		}
 	}
-		
+	
+	
+	//The skeleton for the graph with all the lines
 	var yScale = d3.scale.linear()
 					.domain([0, maxCC])
-					.range([150, 20]);
+					.range([280, 150]);
 		
-	var leftAxis = providerssvg.append("line")
+	var leftAxis = comparisonsvg.append("line")
 					.attr("x1", 10)
-					.attr("y1", 150)
+					.attr("y1", 280)
 					.attr("x2", 10)
-					.attr("y2", 20)
+					.attr("y2", 150)
 					.attr("stroke-width", 1)
 					.attr("stroke", "black");
 									
-	var rightAxis = providerssvg.append("line")
+	var rightAxis = comparisonsvg.append("line")
 					.attr("x1", 165)
-					.attr("y1", 150)
-					.attr("x2", 165)
-					.attr("y2", 20)
-					.attr("stroke-width", 1)
-					.attr("stroke", "black");
-					
-	var bottomAxis = providerssvg.append("line")
-					.attr("x1", 10)
-					.attr("y1", 150)
+					.attr("y1", 280)
 					.attr("x2", 165)
 					.attr("y2", 150)
 					.attr("stroke-width", 1)
 					.attr("stroke", "black");
+					
+	var bottomAxis = comparisonsvg.append("line")
+					.attr("x1", 10)
+					.attr("y1", 280)
+					.attr("x2", 165)
+					.attr("y2", 280)
+					.attr("stroke-width", 1)
+					.attr("stroke", "black");
 	
 	//add tick at top of left axis
-	providerssvg.append("line")
+	comparisonsvg.append("line")
 				.attr("x1", 10)
-				.attr("y1", 20)
+				.attr("y1", 150)
 				.attr("x2", 15)
-				.attr("y2", 20)
+				.attr("y2", 150)
 				.attr("stroke-width", 1)
 				.attr("stroke", "black");
 				
-	providerssvg.append('text').text("$" + maxCC)
+	comparisonsvg.append('text').text("$" + maxCC)
 		.attr('x', 16)
-		.attr('y', 23)
+		.attr('y', 153)
 		.attr('fill', 'black')
 		.attr("font-family", "sans-serif")
 		.attr("font-size", "6px");
-					
-	providerssvg.append('text').text("Average").attr('x', 5).attr('y', 156).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
-	providerssvg.append('text').text("covered").attr('x', 5).attr('y', 162).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
-	providerssvg.append('text').text("charges").attr('x', 5).attr('y', 168).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
 	
-	providerssvg.append('text').text("Average").attr('x', 152).attr('y', 156).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
-	providerssvg.append('text').text("total").attr('x', 152).attr('y', 162).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
-	providerssvg.append('text').text("Medicare").attr('x', 152).attr('y', 168).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
-	providerssvg.append('text').text("coverage").attr('x', 152).attr('y', 174).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
+	//small text at the bottom of graph with lines
+	comparisonsvg.append('text').text("Average").attr('x', 5).attr('y', 290).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
+	comparisonsvg.append('text').text("covered").attr('x', 5).attr('y', 298).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
+	comparisonsvg.append('text').text("charges").attr('x', 5).attr('y', 306).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
+	
+	comparisonsvg.append('text').text("Average").attr('x', 152).attr('y', 290).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
+	comparisonsvg.append('text').text("total").attr('x', 152).attr('y', 298).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
+	comparisonsvg.append('text').text("Medicare").attr('x', 152).attr('y', 306).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
+	comparisonsvg.append('text').text("coverage").attr('x', 152).attr('y', 314).attr('fill', 'black').attr("font-family", "sans-serif").attr("font-size", "6px");
 
-	
-	
-	providerssvg.selectAll(".hospitalline")
+	//Create all the lines
+	comparisonsvg.selectAll(".hospitalline")
 		.data(hospitalWithDRG)
 		.enter()
 			.append("line")
+			.attr("opacity", 1)
 			.attr("class", "hospitalline")
 			.attr("x1", 10)
 			.attr("id", function(d) { return "hospitalline" + d.hospitalID; })
@@ -163,30 +169,9 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 			.attr("stroke", "red")
 			.style("opacity", 2)
 			.on("click", function(d) { hospitalClick(parseInt(d.hospitalID), hospitals); });
-			//.attr("stroke-width", function(d) { if ((d.avgTP / d.avgCC) > 1) return 1; else return 0.02; })
-			//.attr("stroke", function(d) { if ((d.avgTP / d.avgCC) > 1) return "green"; else return "blue"; });
-			
-	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 180);
 	
-	providerssvg.append('text').text('Best Coverage')
-		.attr('x', 5)
-		.attr('y', 188)
-		.attr('fill', 'black')
-		.attr("font-family", "sans-serif")
-		.style("font-weight","bold")
-		.attr("font-size", "8px");
-		
-	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 280);
 	
-	providerssvg.append('text').text('Worst Coverage')
-		.attr('x', 5)
-		.attr('y', 288)
-		.attr('fill', 'black')
-		.attr("font-family", "sans-serif")
-		.style("font-weight","bold")
-		.attr("font-size", "8px");	
-		
-		
+	//PANEL FOR BEST COVERAGE
 	var bestCoverage = [];
 	bestCoverage[1] = 0;
 	
@@ -200,10 +185,74 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 		}
 	}
 	
-	//console.log("here is best coverage");
-	//console.log(bestCoverage);
-	//console.log(hospitalWithDRG);
+	var bMCpercentage = bestCoverage[1] * 100;
+	
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 325);
+	
+	comparisonsvg.append('text').text('Best Coverage')
+		.attr('x', 5)
+		.attr('y', 333)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "8px");
 		
+	comparisonsvg.append('text').text(hospitals[bestCoverage[0]].name)
+			.attr('x', 5)
+			.attr('y', 345)
+			.attr('fill', 'green')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "7px");
+	
+	comparisonsvg.append('text').text("Average total medicare coverage: " + bMCpercentage.toFixed(2) + "%")
+				.attr('x', 25)
+				.attr('y', 357)
+				.attr('fill', 'black')
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "7px");
+			
+	//add rectangles for the provider with the best coverage
+	comparisonsvg.append("rect")
+				.attr("fill", "green")
+				.attr("height", 30)
+				.attr("width", function (d) {if (bestCoverage[1] > 1) return 160; else return bestCoverage[1] * 160; })
+				.attr("y", 365)
+				.attr("x", 10)
+				.on("click", function(d) { clickedRectangle(bestCoverage[0]) });
+	
+	comparisonsvg.append("rect")
+				.attr("fill", "red")
+				.attr("height", 30)
+				.attr("width", 160 - bestCoverage[1] * 160)
+				.attr("y", 365)
+				.attr("x", 10 + bestCoverage[1] * 160)
+				.on("click", function(d) { clickedRectangle(bestCoverage[0]) });
+				
+				
+	comparisonsvg.append('text').text("Average covered charges: $" + hospitals[bestCoverage[0]].DRGs[DRGchoice].avgCC)
+				.attr('x', 25)
+				.attr('y', 382)
+				.attr('fill', 'black')
+				.attr("font-family", "sans-serif")
+				.style("font-weight","bold")
+				.attr("font-size", "7px");
+	
+	comparisonsvg.append('text').text("* Out of " + hospitals[bestCoverage[0]].DRGs[DRGchoice].discharges + " discharges")
+				.attr('x', 90)
+				.attr('y', 405)
+				.attr('fill', 'black')
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "7px");					
+	
+	
+	
+	
+	
+	
+	
+	
+	//PANEL FOR WORST COVERAGE
 	var worstCoverage = bestCoverage.slice();
 	
 	for (i = 0; i < hospitalWithDRG.length; i++) {
@@ -212,98 +261,63 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 			worstCoverage[1] = (hospitalWithDRG[i].avgTP / hospitalWithDRG[i].avgCC);
 		}
 	}
+		var wMCpercentage = worstCoverage[1] * 100;
 	
-	//add rectangles for the provider with the best coverage
-	providerssvg.append("rect")
-				.attr("fill", "green")
-				.attr("height", 30)
-				.attr("width", function (d) {if (bestCoverage[1] > 1) return 160; else return bestCoverage[1] * 160; })
-				.attr("y", 220)
-				.attr("x", 10);
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 420);
 	
-	providerssvg.append("rect")
-				.attr("fill", "red")
-				.attr("height", 30)
-				.attr("width", 160 - bestCoverage[1] * 160)
-				.attr("y", 220)
-				.attr("x", 10 + bestCoverage[1] * 160);
-				
-	providerssvg.append('text').text(hospitals[bestCoverage[0]].name)
-				.attr('x', 5)
-				.attr('y', 200)
-				.attr('fill', 'green')
-				.attr("font-family", "sans-serif")
-				.style("font-weight","bold")
-				.attr("font-size", "7px");
-				
-	var bMCpercentage = bestCoverage[1] * 100;
+	comparisonsvg.append('text').text('Worst Coverage')
+		.attr('x', 5)
+		.attr('y', 428)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "8px");	
+		
+	comparisonsvg.append('text').text(hospitals[worstCoverage[0]].name)
+			.attr('x', 5)
+			.attr('y', 440)
+			.attr('fill', 'red')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "8px");		
 	
-	providerssvg.append('text').text("Average total medicare coverage: " + bMCpercentage.toFixed(2) + "%")
-				.attr('x', 25)
-				.attr('y', 212)
-				.attr('fill', 'black')
-				.attr("font-family", "sans-serif")
-				.attr("font-size", "7px");
-				
-	providerssvg.append('text').text("Average covered charges: $" + hospitals[bestCoverage[0]].DRGs[DRGchoice].avgCC)
-				.attr('x', 25)
-				.attr('y', 237)
-				.attr('fill', 'black')
-				.attr("font-family", "sans-serif")
-				.style("font-weight","bold")
-				.attr("font-size", "7px");
+	comparisonsvg.append('text').text("Average total medicare coverage: " + wMCpercentage.toFixed(2) + "%")
+			.attr('x', 25)
+			.attr('y', 452)
+			.attr('fill', 'black')
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "7px");
 	
-	providerssvg.append('text').text("* Out of " + hospitals[bestCoverage[0]].DRGs[DRGchoice].discharges + " discharges")
-				.attr('x', 90)
-				.attr('y', 260)
-				.attr('fill', 'black')
-				.attr("font-family", "sans-serif")
-				.attr("font-size", "7px");					
-	
-	
+
 	//add rectangles for the provider with the worst coverage
-	providerssvg.append("rect")
+	
+	comparisonsvg.append("rect")
 				.attr("fill", "green")
 				.attr("height", 30)
 				.attr("width", worstCoverage[1] * 160)
-				.attr("y", 320)
-				.attr("x", 10);
+				.attr("y", 460)
+				.attr("x", 10)
+				.on("click", function(d) { clickedRectangle(worstCoverage[0]) });
 	
-	providerssvg.append("rect")
+	comparisonsvg.append("rect")
 				.attr("fill", "red")
 				.attr("height", 30)
 				.attr("width", 160 - worstCoverage[1] * 160)
-				.attr("y", 320)
-				.attr("x", 10 + worstCoverage[1] * 160);
-				
-	providerssvg.append('text').text(hospitals[worstCoverage[0]].name)
-				.attr('x', 5)
-				.attr('y', 300)
-				.attr('fill', 'red')
-				.attr("font-family", "sans-serif")
-				.style("font-weight","bold")
-				.attr("font-size", "8px");			
-	
-	var wMCpercentage = worstCoverage[1] * 100;
-	
-	providerssvg.append('text').text("Average total medicare coverage: " + wMCpercentage.toFixed(2) + "%")
+				.attr("y", 460)
+				.attr("x", 10 + worstCoverage[1] * 160)
+				.on("click", function(d) { clickedRectangle(worstCoverage[0]) });
+								
+	comparisonsvg.append('text').text("Average covered charges: $" + hospitals[worstCoverage[0]].DRGs[DRGchoice].avgCC)
 				.attr('x', 25)
-				.attr('y', 312)
-				.attr('fill', 'black')
-				.attr("font-family", "sans-serif")
-				.attr("font-size", "7px");
-				
-	providerssvg.append('text').text("Average covered charges: $" + hospitals[worstCoverage[0]].DRGs[DRGchoice].avgCC)
-				.attr('x', 25)
-				.attr('y', 337)
+				.attr('y', 477)
 				.attr('fill', 'black')
 				.attr("font-family", "sans-serif")
 				.style("font-weight","bold")
 				.attr("font-size", "7px");
 	
-	providerssvg.append('text').text("* Out of " + hospitals[worstCoverage[0]].DRGs[DRGchoice].discharges + " discharges")
+	comparisonsvg.append('text').text("* Out of " + hospitals[worstCoverage[0]].DRGs[DRGchoice].discharges + " discharges")
 				.attr('x', 90)
-				.attr('y', 360)
+				.attr('y', 500)
 				.attr('fill', 'black')
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "7px");				
@@ -311,11 +325,12 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 }
 
 function emptyRighthandPanel() {
+		//Frame around the panel
 	var frameLineLeft = comparisonsvg.append("line")
 			.attr("x1", 0)
 			.attr("y1", 0)
 			.attr("x2", 0)
-			.attr("y2", 500)
+			.attr("y2", 520)
 			.attr("stroke-width", 2)
 			.attr("stroke", "black");
 				
@@ -323,7 +338,7 @@ function emptyRighthandPanel() {
 			.attr("x1", 180)
 			.attr("y1", 0)
 			.attr("x2", 180)
-			.attr("y2", 500)
+			.attr("y2", 520)
 			.attr("stroke-width", 2)
 			.attr("stroke", "black");
 			
@@ -337,73 +352,113 @@ function emptyRighthandPanel() {
 			
 	var frameLineLeft = comparisonsvg.append("line")
 			.attr("x1", 0)
-			.attr("y1", 500)
+			.attr("y1", 520)
 			.attr("x2", 180)
-			.attr("y2", 500)
+			.attr("y2", 520)
 			.attr("stroke-width", 2)
 			.attr("stroke", "black");
-	
-	
-	var DRGsvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 100);
-	var providerssvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 700).attr("y", 70);
-	
-	DRGsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 30);
-	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180);
 			
-	DRGsvg.append('text').text('Uncovered Charges Comparison')
-			.attr('x', 5)
-			.attr('y', 20)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.style("font-weight","bold")
-			.attr("font-size", "10px");
-	
-	DRGsvg.append('text').text('Diagnosis-Related Group')
-			.attr('x', 5)
-			.attr('y', 38)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.style("font-weight","bold")
-			.attr("font-size", "8px");
-	
-	providerssvg.append('text').text('Providers Coverage')
-			.attr('x', 5)
-			.attr('y', 8)
-			.attr('fill', 'black')
-			.attr("font-family", "sans-serif")
-			.style("font-weight","bold")
-			.attr("font-size", "8px");
-
 			
-	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 180);
-	
-	providerssvg.append('text').text('Best Coverage')
+	//Text at the top		
+	comparisonsvg.append('text').text('Uncovered Charges Comparison')
 		.attr('x', 5)
-		.attr('y', 188)
+		.attr('y', 18)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "10px");		
+			
+	//First blue rectangle with text
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 30);
+	
+	comparisonsvg.append('text').text('Diagnosis-Related Group')
+		.attr('x', 5)
+		.attr('y', 37)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "8px");
+	
+	//Second blue rectangle with text
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 128);
+			
+	comparisonsvg.append('text').text('Providers Coverage')
+			.attr('x', 5)
+			.attr('y', 136)
+			.attr('fill', 'black')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "8px");
+			
+	
+	
+	
+	
+	
+
+	
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 325);
+	
+	comparisonsvg.append('text').text('Best Coverage')
+		.attr('x', 5)
+		.attr('y', 333)
 		.attr('fill', 'black')
 		.attr("font-family", "sans-serif")
 		.style("font-weight","bold")
 		.attr("font-size", "8px");
 		
-	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 280);
+
 	
-	providerssvg.append('text').text('Worst Coverage')
+	
+	comparisonsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 420);
+	
+	comparisonsvg.append('text').text('Worst Coverage')
 		.attr('x', 5)
-		.attr('y', 288)
+		.attr('y', 428)
 		.attr('fill', 'black')
 		.attr("font-family", "sans-serif")
 		.style("font-weight","bold")
 		.attr("font-size", "8px");	
+		
+	
 				
 }
 
-function lineClick (e) {
-	console.log(e);
+function clickedRectangle(e) {
+	//console.log(e);
+	var circleradius;
+	var currentcolor;
+	//var currentcolor = d3.select("#hospitalcircle" + e).style("fill");
+	//console.log(currentcolor);
 	
-	d3.select("#hospitalline" + parseInt(e.hospitalID)).attr("stroke-width", 1).attr("stroke", "green");
-	d3.select("#hospitalcircle" + parseInt(e.hospitalID)).style("fill", "green").attr("r", 30);
+	if (zoomlevel == "country") {
+		circleradius = 1.5;
+	}
+	else if (zoomlevel == "state") {
+		circleradius = 0.6;
+	}	
+	else {
+		circleradius = 0.2;
+	}
 	
-	console.log("trying to reach the marked hospital from the righthandpanel:");
-	console.log(d3.select("#hospitalcircle" + parseInt(e.hospitalID)));
+	if (markedHospitals.indexOf(parseInt(e)) !== -1) {
+		circleradius = +circleradius * 2.5;
+		currentcolor = "green";
+	}
+	else {
+		currentcolor = "red";
+	}
 	
+	
+	console.log(markedHospitals);
+									
+
+	if (currentcolor === "rgb(255, 0, 0)") {
+		console.log("the circle is red");
+		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "red");
+	}
+	else {
+		console.log("the circle is green");
+		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "green");
+	}
 }

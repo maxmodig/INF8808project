@@ -11,14 +11,14 @@ function createLayout(mapData, countiesMap, hospitals, hospwithcoord) {
 		.attr("class", "area")
 		.attr("fill", "blue")
 		//.attr("id", function(d) { console.log("state" + parseInt(d.properties.STATE)); })//return d.id; })
-		.attr('opacity', 0.5)
+		.attr('opacity', 0.2)
 		.style('stroke', 'black')
 		.style('stroke-width', 0.5)
 		.on("mouseover", function(d) {
 			d3.select(this).attr('opacity', 1);
 		})                  
 		.on("mouseout", function(d) {
-		  d3.select(this).attr('opacity', 0.5);
+		  d3.select(this).attr('opacity', 0.2);
 		})
 		.on("click", function(d) { stateClick(d, width, height, countiesMap, hospwithcoord, hospitals); });
 		
@@ -83,12 +83,12 @@ function stateClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 			.attr("class", "countypath")
 			.style('stroke', 'black')
 			.style('stroke-width', 0.2)
-			.attr('opacity', 0.5)
+			.attr('opacity', 0.2)
 			.on("mouseover", function(d) {
 				d3.select(this).attr('opacity', 1);
 			})                  
 			.on("mouseout", function(d) {
-			  d3.select(this).attr('opacity', 0.5);
+			  d3.select(this).attr('opacity', 0.2);
 			})
 			.on("click", function(d) { countyClick(d, width, height, countiesMap, hospwithcoord, hospitals); });
 		

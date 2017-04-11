@@ -25,10 +25,16 @@
   		<div class="col-md-9" id="forbottom"></div>  		
 	</div>
 	
-	<div class="choixRegion">
-        <label for="region"> DRG: </label>
-        <select id="region" size="1"></select>
+	<div class="drgchooser">
+        <label for="drg"></label>
+        <select id="drg" size="1"></select>
     </div>
+	<div class="Affichage">
+        <button id="display"> Show marked hospitals </button>
+        <button id="reset"> Reset selection </button>
+    </div>
+	
+	
 
 	<script type="text/javascript" src="javascript/util/d3.v3.js"></script>
 	<script type="text/javascript" src="javascript/util/d3-tip.js"></script>
@@ -39,6 +45,10 @@
 	<script type="text/javascript" src="javascript/projectvisual.js"></script>
 	<script type="text/javascript" src="javascript/righthandPanel.js"></script>
 	<script type="text/javascript" src="javascript/bottomPanel.js"></script>
+	<script type="text/javascript" src="javascript/toolTip.js"></script>
+	<script type="text/javascript" src="javascript/buttonInterface.js"></script>
+	
+	
 
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -57,7 +67,7 @@
 		//.attr("x", 550)
 		//.attr("y", 5)
 		.attr("width", 180)
-		.attr("height", 500);
+		.attr("height", 520);
 
 	var bottomsvg = d3.select("#forbottom")
 					.style("padding-top", "20px")
@@ -67,6 +77,8 @@
 					.attr("height", 200);	
 		
 	var g = mapsvg.append("g");
+	
+	//var g = comparisonsvg.append("g");
 	
 	//call function to load the data)
 	
@@ -79,6 +91,9 @@
 	var centeredCounty;
 	
 	var zoomlevel = "country";
+	
+	//Gets value "all" or "selected" depending on if we are showing all hospitals or just the ones that we have selected
+	var displaying = "all";
 	
 	var DRGlist = [];
 	
@@ -99,29 +114,23 @@
 		
 		emptyBottomPanel();
 		emptyRighthandPanel();
+		//addRighthandPanel(comparisonsvg, hospitals, 39)
 		
+		menuItems();
+		moveButtons();
 		var hospwithcoord = createhospwithcoord(hospitals);
 		
-
 		
-		var optionsList = [];
-		optionsList.push("All DRGs");
-		for (i = 0; i < DRGlist.length; i++) {
-			optionsList.push(DRGlist[i]);
-		}
-		
-		
-		d3.select("select").selectAll("option")
-			.data(optionsList)
-			.enter()
-			.append("option")
-			.text(function(d) {
-				return d;
-			})
-			
-			
 		d3.select("select").on("change", menuChange);
+		d3.select("#display").on("click", displayFunction);
+		d3.select("#reset").on("click", resetFunction);
 		
+		
+		
+		//menuChange(hospwithcoord, hospitals);
+		
+		console.log("hospwithcoord looks like this before calling");
+		console.log(hospwithcoord);
 		
 		createLayout(mapData, countiesMap, hospitals, hospwithcoord);
 		
@@ -145,16 +154,12 @@
 			else {
 				addRighthandPanel(comparisonsvg, hospitals, parseInt(d3.select("select").property("value")))
 			}
-
 		}
-		
-//-----------------------------------------------
-		
-
 		
 	//addBottomPanel(bottomsvg, hospitals, hospitalChoice);
 		
 	}	
+	
 	</script>
 	</body>
 </html>
