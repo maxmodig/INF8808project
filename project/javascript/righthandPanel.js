@@ -425,11 +425,11 @@ function emptyRighthandPanel() {
 }
 
 function clickedRectangle(e) {
-	//console.log(e);
+	console.log(e);
 	var circleradius;
-	var currentcolor;
-	//var currentcolor = d3.select("#hospitalcircle" + e).style("fill");
-	//console.log(currentcolor);
+	//var currentcolor;
+	var currentcolor = d3.select("#hospitalcircle" + e).style("fill");
+	console.log(currentcolor);
 	
 	if (zoomlevel == "country") {
 		circleradius = 1.5;
@@ -442,17 +442,21 @@ function clickedRectangle(e) {
 	}
 	
 	if (markedHospitals.indexOf(parseInt(e)) !== -1) {
+		console.log("entering the if");
 		circleradius = +circleradius * 2.5;
-		currentcolor = "green";
+		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "green");
+		//currentcolor = "green";
 	}
 	else {
-		currentcolor = "red";
+		console.log("entering the else");
+		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "red");
+		//currentcolor = "red";
 	}
 	
 	
 	console.log(markedHospitals);
 									
-
+	/*
 	if (currentcolor === "rgb(255, 0, 0)") {
 		console.log("the circle is red");
 		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "red");
@@ -461,4 +465,5 @@ function clickedRectangle(e) {
 		console.log("the circle is green");
 		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "green");
 	}
+	*/
 }

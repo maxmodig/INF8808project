@@ -103,5 +103,7 @@ function resetFunction() {
 	bottomsvg.selectAll("svg > *").remove();
 	emptyBottomPanel();
 	markedHospitals = [];
+	displaying = "all";
+	d3.select("#display").text("Show marked hospitals");
 	
 }
