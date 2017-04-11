@@ -4,7 +4,8 @@ function loadData() {
         .defer(d3.json, "counties500.geojson")
 		.defer(d3.csv, "hospitaldata.csv")
 		.defer(d3.csv, "zipcodecoordinates.csv")
-		.defer(d3.json, "hospitals.json")
+		//.defer(d3.json, "hospitals.json")
+		.defer(d3.json, "hospitals2.json")
         .await(ready);
 }
 
@@ -26,6 +27,7 @@ function createHospitalObject(hospitalData) {
 	}	
 }
 
+//created for earlier version where not every hospital had coordinates
 function createhospwithcoord(hospitals) {
 	var hospwithcoord = [];
 	for (i = 0; i < hospitalIDs.length; i++) {

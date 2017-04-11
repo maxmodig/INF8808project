@@ -10,7 +10,6 @@ function createLayout(mapData, countiesMap, hospitals, hospwithcoord) {
 		.attr("d", path)
 		.attr("class", "area")
 		.attr("fill", "blue")
-		//.attr("id", function(d) { console.log("state" + parseInt(d.properties.STATE)); })//return d.id; })
 		.attr('opacity', 0.2)
 		.style('stroke', 'black')
 		.style('stroke-width', 0.5)
@@ -27,8 +26,8 @@ function createLayout(mapData, countiesMap, hospitals, hospwithcoord) {
 	
 
 		
-	/*  un-comment this to be able to zoom with the mousewheel. I think we have too much data to do that, it lags too much
-	var zoom = d3.behavior.zoom()
+	// un-comment this to be able to zoom with the mousewheel. I think we have too much data to do that, it lags too much
+	/*var zoom = d3.behavior.zoom()
     .on("zoom",function() {
         g.attr("transform","translate("+ 
             d3.event.translate.join(",")+")scale("+d3.event.scale+")");
@@ -40,7 +39,7 @@ function createLayout(mapData, countiesMap, hospitals, hospwithcoord) {
 	});
 	
 	mapsvg.call(zoom)		
-	*/	
+	*/
 			
 }
 
@@ -49,7 +48,6 @@ function stateClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 	
 	zoomlevel = "state";
 
-	
 	g.selectAll(".countypath").remove();
 
 	var x, y, k;
@@ -91,7 +89,8 @@ function stateClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 			  d3.select(this).attr('opacity', 0.2);
 			})
 			.on("click", function(d) { countyClick(d, width, height, countiesMap, hospwithcoord, hospitals); });
-		
+	
+	//redraw the circles to have them on top of the county-paths
 	createHospitalCircles(hospwithcoord, hospitals);	
 	
 	g.transition()
@@ -113,17 +112,13 @@ function countyClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 	
 	//if we click a county other than the one that we are currently zoomed in on, we change focus to that
 	if (centeredCounty !== d.properties.COUNTY) {
-		console.log("we enter the if"); 
 		var centroid = path.centroid(d);
-		console.log("here is centroid");
-		console.log(centroid);
 		x = centroid[0];
 		y = centroid[1];
 		k = 18;
 		centeredCounty = d.properties.COUNTY;
 		circleradius = 1;
 	} else { //if we clicked the same county as the one that is currently zoomed in on, then we zoom out to see the whole country again
-		console.log("we enter the else");
 		x = width / 2;
 		y = height / 2;
 		k = 1;
@@ -136,8 +131,6 @@ function countyClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 	
 	createHospitalCircles(hospwithcoord, hospitals);
 	
-	console.log(zoomlevel);
-	 
 	g.transition()
 		.duration(500)
 		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
@@ -146,13 +139,9 @@ function countyClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 }
 
 function createHospitalCircles(hospwithcoord, hospitals) {
+	console.log("ENTERING createHospitalCircles");
+	
 	g.selectAll(".hospitalcircle").remove();
-	
-	
-	
-	//console.log(d3.select("select").property("value"));
-	//console.log("We have chosen another DRG in the menu: " + d3.select("select").property("value") + " aka " + parseInt(d3.select("select").property("value")));
-	
 	
 	var hospitalsToShow = [];
 	
@@ -161,15 +150,11 @@ function createHospitalCircles(hospwithcoord, hospitals) {
 	}
 	else {
 		for (i = 0; i < hospwithcoord.length; i++) {
-			if (hospitals[hospwithcoord[i].ID].DRGs[parseInt(d3.select("select").property("value"))]) {
+			if (hospitals[hospwithcoord[i].ID].DRGs[d3.select("select").property("value").substring(0,3)]) {
 				hospitalsToShow.push(hospwithcoord[i]);
 			}
 		}
 	}
-	
-	console.log("we are displaying " + hospitalsToShow.length + " out of " + hospwithcoord.length + " hospitals");
-	
-
 	
 	var circleradius;
 		
@@ -182,8 +167,8 @@ function createHospitalCircles(hospwithcoord, hospitals) {
 	else {
 		circleradius = 0.2;
 	}
-	console.log("here is hospitalsToShow");
-	console.log(hospitalsToShow);
+	
+	
 	g.selectAll(".hospitalcircle")
 		.data(hospitalsToShow)
 		.enter()
@@ -210,6 +195,13 @@ function createHospitalCircles(hospwithcoord, hospitals) {
 											return "green";
 										}		
 			})
+			.attr("opacity", function(d) {if (markedHospitals.indexOf(parseInt(d.ID)) === -1 && displaying !== "all") {
+											return 0;
+										}
+										else {
+											return 1;
+										}		
+			})
 			.on("mouseover", function(d) {
 				d3.select(this).attr("r", circleradius * 5).style("fill", "yellow");
 			})                  
@@ -221,16 +213,13 @@ function createHospitalCircles(hospwithcoord, hospitals) {
 										}		
 			})
 			.on("click", function(d) { hospitalClick(parseInt(d.ID), hospitals); });
-			
-	console.log("Look at all these circles!");
-	console.log(g.selectAll(".hospitalcircle"));
+
 		
 }
 
 
 function hospitalClick(clickedID, hospitals) {
-	console.log("entering hospitalClick");
-	console.log(clickedID);
+	
 	
 	bottomsvg.selectAll("svg > *").remove();
 	

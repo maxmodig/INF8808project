@@ -1,5 +1,6 @@
 function addBottomPanel(bottomsvg, hospitals, hospitalChoice) {
-
+	console.log("ENTERING BOTTOMPANEL");
+	
 	bottomsvg.append("line")
 		.attr("x1", 0)
 		.attr("y1", 0)
@@ -59,22 +60,21 @@ function addBottomPanel(bottomsvg, hospitals, hospitalChoice) {
 	var DRGsAtHospital = [];
 	
 	for (i = 0; i < DRGlist.length; i++) {
-		if (hospitals[hospitalChoice].DRGs[+parseInt(DRGlist[i])]) {
+		if (hospitals[hospitalChoice].DRGs[DRGlist[i].substring(0,3)]) {
 			//DRGsAtHospital.push(+parseInt(DRGlist[i]));
 			DRGsAtHospital.push(DRGlist[i]);
 		}
 	}	
-	
-	//console.log("at hospital with ID " + hospitalChoice + " we have the following DRGs");
-	//console.log(DRGsAtHospital);
-	
+
 	
 	var dischargesArray = [];
 	
 	for (i = 0; i < DRGsAtHospital.length; i++) {
+
+		
 		dischargesArray.push({
 			DRG: DRGsAtHospital[i],
-			discharges: +hospitals[hospitalChoice].DRGs[+parseInt(DRGsAtHospital[i])].discharges
+			discharges: +hospitals[hospitalChoice].DRGs[DRGsAtHospital[i].substring(0,3)].discharges
 		});
 	}
 	
@@ -98,24 +98,11 @@ function addBottomPanel(bottomsvg, hospitals, hospitalChoice) {
 			.attr("font-size", "8px");
 			
 	for (i = 0; i < top5discharges.length; i++) {
-		top5discharges[i].avgCC = +hospitals[hospitalChoice].DRGs[+parseInt(top5discharges[i].DRG)].avgCC;
-		top5discharges[i].avgTP = +hospitals[hospitalChoice].DRGs[+parseInt(top5discharges[i].DRG)].avgTP;
+		top5discharges[i].avgCC = +parseFloat(hospitals[hospitalChoice].DRGs[top5discharges[i].DRG.substring(0,3)].avgCC.replace(/[$,]+/g,""));
+		top5discharges[i].avgTP = +parseFloat(hospitals[hospitalChoice].DRGs[top5discharges[i].DRG.substring(0,3)].avgTP.replace(/[$,]+/g,""));
 		top5discharges[i].coverage = (top5discharges[i].avgTP / top5discharges[i].avgCC);
 	}
 	
-	
-	/*
-		if (hospitals[hospitalChoice].DRGs[DRGchoice]) {
-			hospitalWithDRG.push({
-				hospitalID: +hospitalIDs[i],
-				avgCC: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgCC,
-				avgMP: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgMP,
-				avgTP: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgTP,
-				discharges: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].discharges				
-			});
-		}
-	}
-	*/
 	
 	bottomsvg.selectAll("greenrect")
 			.data(top5discharges)
@@ -154,10 +141,10 @@ function addBottomPanel(bottomsvg, hospitals, hospitalChoice) {
 				.attr("font-size", "7px");
 	
 	
-	
-	//console.log(top5discharges);	
+
 }
 
+//create a bottomPanel with no data, only the borders
 function emptyBottomPanel() {
 	bottomsvg.append("line")
 		.attr("x1", 0)

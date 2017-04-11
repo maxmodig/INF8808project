@@ -1,5 +1,19 @@
 function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
+	console.log("ENTERING ADDRIGHTPANEL AND LOOKING AT DRG WITH ID " + DRGchoice);
 	
+	
+	if (DRGchoice < 100) {
+		DRGchoice = "0" + DRGchoice.toString();
+	}
+	else {
+		DRGchoice = DRGchoice.toString();
+	}
+	
+	console.log(DRGchoice);
+	
+	
+	
+	//DRGlist[0].substring(0,3)
 	
 	//Frame around the panel
 	var frameLineLeft = comparisonsvg.append("line")
@@ -69,18 +83,26 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 	//create array that will hold relevant information about every hospital providing the chosen DRG
 	var hospitalWithDRG = [];
 	
+	
+	//+parseFloat(hospitalData[i][' Average Covered Charges '].replace(/[$,]+/g,"")). 
+	
+	
 	//go through all hospitals in our hospitals-object and if it provides the chosen DRG, add information about it to hospitalWithDRG
 	for (i = 0; i < hospitalIDs.length; i++) {
+		
 		if (hospitals[hospitalIDs[i]].DRGs[DRGchoice]) {
+			
 			hospitalWithDRG.push({
 				hospitalID: +hospitalIDs[i],
-				avgCC: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgCC,
-				avgMP: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgMP,
-				avgTP: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgTP,
+				avgCC: +parseFloat(hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgCC.replace(/[$,]+/g,"")),
+				avgMP: +parseFloat(hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgMP.replace(/[$,]+/g,"")),
+				avgTP: +parseFloat(hospitals[hospitalIDs[i]].DRGs[DRGchoice].avgTP.replace(/[$,]+/g,"")),
 				discharges: +hospitals[hospitalIDs[i]].DRGs[DRGchoice].discharges				
 			});
 		}
 	}
+	
+
 	
 	
 	var maxCC = 0;
@@ -175,7 +197,6 @@ function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
 	var bestCoverage = [];
 	bestCoverage[1] = 0;
 	
-	console.log(hospitalWithDRG);
 	
 	
 	for (i = 0; i < hospitalWithDRG.length; i++) {
@@ -425,11 +446,10 @@ function emptyRighthandPanel() {
 }
 
 function clickedRectangle(e) {
-	console.log(e);
+	
 	var circleradius;
 	//var currentcolor;
-	var currentcolor = d3.select("#hospitalcircle" + e).style("fill");
-	console.log(currentcolor);
+	
 	
 	if (zoomlevel == "country") {
 		circleradius = 1.5;
@@ -442,28 +462,14 @@ function clickedRectangle(e) {
 	}
 	
 	if (markedHospitals.indexOf(parseInt(e)) !== -1) {
-		console.log("entering the if");
 		circleradius = +circleradius * 2.5;
 		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "green");
-		//currentcolor = "green";
 	}
 	else {
-		console.log("entering the else");
 		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "red");
-		//currentcolor = "red";
 	}
 	
 	
 	console.log(markedHospitals);
 									
-	/*
-	if (currentcolor === "rgb(255, 0, 0)") {
-		console.log("the circle is red");
-		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "red");
-	}
-	else {
-		console.log("the circle is green");
-		d3.select("#hospitalcircle" + e).transition().duration(2000).attr("r", circleradius * 25).style("fill", "yellow").transition().duration(100).attr("r", circleradius).style("fill", "green");
-	}
-	*/
 }

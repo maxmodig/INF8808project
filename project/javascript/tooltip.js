@@ -2,8 +2,8 @@
 
 function RightHandToolTip(scatterPlot) {
 
-   var Tip = d3.tip();
-    //...
+   var tip = d3.tip();
+   
 	tip.attr('class', 'd3-tip')
 		.offset([-10, 0])
 		.html(function() {
@@ -27,8 +27,8 @@ function RightHandToolTip(scatterPlot) {
 
 function MapToolTip(scatterPlot) {
 
-   var Tip = d3.tip();
-    //...
+   var tip = d3.tip();
+ 
 	tip.attr('class', 'd3-tip')
 		.offset([-10, 0])
 		.html(function() {
@@ -57,8 +57,8 @@ function MapToolTip(scatterPlot) {
 
 function BottomToolTip(scatterPlot) {
 
-   var Tip = d3.tip();
-    //...
+   var tip = d3.tip();
+
 	tip.attr('class', 'd3-tip')
 		.offset([-10, 0])
 		.html(function() {

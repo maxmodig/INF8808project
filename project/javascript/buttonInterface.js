@@ -1,5 +1,4 @@
 
-
 //adds the DRGs to the dropdown menu
 function menuItems() {
 	var optionsList = [];
@@ -18,33 +17,32 @@ function menuItems() {
 	})
 }
 
+//previously used to move the dropdown menu and buttons
 function moveButtons() {
-	var hello = document.getElementById('drg');
-	hello.style.position = "absolute";
-	hello.style.left = 1200+'px';
-	hello.style.top = 142+'px';
+	var moveit = document.getElementById('drg');
+	moveit.style.position = "absolute";
+	moveit.style.left = 1200+'px';
+	moveit.style.top = 142+'px';
 	
-	var hello = document.getElementById('display');
-	hello.style.position = "absolute";
-	hello.style.left = 1172+'px';
-	hello.style.top = 165+'px';
+	var moveit = document.getElementById('display');
+	moveit.style.position = "absolute";
+	moveit.style.left = 1172+'px';
+	moveit.style.top = 165+'px';
 	
-	var hello = document.getElementById('reset');
-	hello.style.position = "absolute";
-	hello.style.left = 1200+'px';
-	hello.style.top = 192+'px';
+	var moveit = document.getElementById('reset');
+	moveit.style.position = "absolute";
+	moveit.style.left = 1200+'px';
+	moveit.style.top = 192+'px';
 }
 
 
 
 
 function displayFunction() {
-	//var displaying = "all" or "selected"
-	//console.log(this);
-	//console.log(e);
+	//displaying = "all" or "selected"
 	
-	console.log(displaying);
-	console.log(comparisonsvg.selectAll(".hospitalline"));
+	
+	//if we are currently displaying all hospitals, then display only the ones we have selected
 	if (displaying === "all") {
 		g.selectAll(".hospitalcircle").attr("opacity", function(d) { if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
 																			return 0;
@@ -59,16 +57,11 @@ function displayFunction() {
 																	else {
 																			return 1;
 																	}});
-						/*											
-		comparisonsvg.selectAll(".hospitalline").attr("opacity", function(d) { if (markedHospitals.indexOf(parseInt(d.hospitalID)) === -1) {
-																			return 0;
-																		}
-																	else {
-																			return 1;
-																	}});	*/												
+													
 		displaying = "selected";
 		d3.select("#display").text("Show all hospitals");
 	}
+	//if we are currently displaying only the selected hospitals, then display all hospitals
 	else {
 		g.selectAll(".hospitalcircle").attr("opacity", 1);
 		
@@ -78,7 +71,7 @@ function displayFunction() {
 																	else {
 																			return 1;
 																	}});
-		//comparisonsvg.selectAll(".hospitalline").attr("opacity", 1);
+
 		displaying = "all";
 		d3.select("#display").text("Show marked hospitals");
 	}
