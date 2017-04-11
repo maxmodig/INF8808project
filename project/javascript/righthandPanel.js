@@ -1,11 +1,5 @@
-function addRighthandPanel(comparisonsvg, hospitals) {
-		
-	//DRG that is chosen
-	var DRGchoice = 313;
-	
-	//console.log("now hospitals looks like this");
-	//console.log(hospitals);
-	
+function addRighthandPanel(comparisonsvg, hospitals, DRGchoice) {
+
 	var frameLineLeft = comparisonsvg.append("line")
 			.attr("x1", 0)
 			.attr("y1", 0)
@@ -85,8 +79,6 @@ function addRighthandPanel(comparisonsvg, hospitals) {
 		}
 	}
 	
-	//console.log("here is data for the hospitals that provide DRG " + DRGchoice);
-	//console.log(hospitalWithDRG);
 	
 	var maxCC = 0;
 	var maxTP = 0;
@@ -101,8 +93,6 @@ function addRighthandPanel(comparisonsvg, hospitals) {
 			maxTP = +hospitalWithDRG[i].avgTP;
 		}
 	}
-	
-	//console.log("the maximum covered charges is " + maxCC + " at hospital with ID " + maxID);
 		
 	var yScale = d3.scale.linear()
 					.domain([0, maxCC])
@@ -159,7 +149,7 @@ function addRighthandPanel(comparisonsvg, hospitals) {
 
 	
 	
-	providerssvg.selectAll("hospitalline")
+	providerssvg.selectAll(".hospitalline")
 		.data(hospitalWithDRG)
 		.enter()
 			.append("line")
@@ -170,9 +160,9 @@ function addRighthandPanel(comparisonsvg, hospitals) {
 			.attr("x2", 165)
 			.attr("y2", function(d) { return yScale(d.avgTP); })
 			.attr("stroke-width", 0.02)
-			.attr("stroke", "blue")
+			.attr("stroke", "red")
 			.style("opacity", 2)
-			.on("click", clickFunction);
+			.on("click", function(d) { hospitalClick(parseInt(d.hospitalID), hospitals); });
 			//.attr("stroke-width", function(d) { if ((d.avgTP / d.avgCC) > 1) return 1; else return 0.02; })
 			//.attr("stroke", function(d) { if ((d.avgTP / d.avgCC) > 1) return "green"; else return "blue"; });
 			
@@ -199,6 +189,8 @@ function addRighthandPanel(comparisonsvg, hospitals) {
 		
 	var bestCoverage = [];
 	bestCoverage[1] = 0;
+	
+	console.log(hospitalWithDRG);
 	
 	
 	for (i = 0; i < hospitalWithDRG.length; i++) {
@@ -318,6 +310,100 @@ function addRighthandPanel(comparisonsvg, hospitals) {
 
 }
 
-function clickFunction (e) {
+function emptyRighthandPanel() {
+	var frameLineLeft = comparisonsvg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 0)
+			.attr("x2", 0)
+			.attr("y2", 500)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+				
+	var frameLineLeft = comparisonsvg.append("line")
+			.attr("x1", 180)
+			.attr("y1", 0)
+			.attr("x2", 180)
+			.attr("y2", 500)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+			
+	var frameLineLeft = comparisonsvg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 0)
+			.attr("x2", 180)
+			.attr("y2", 0)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+			
+	var frameLineLeft = comparisonsvg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 500)
+			.attr("x2", 180)
+			.attr("y2", 500)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+	
+	
+	var DRGsvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 100);
+	var providerssvg = comparisonsvg.append("svg").attr("width", 180).attr("height", 700).attr("y", 70);
+	
+	DRGsvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 30);
+	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180);
+			
+	DRGsvg.append('text').text('Uncovered Charges Comparison')
+			.attr('x', 5)
+			.attr('y', 20)
+			.attr('fill', 'black')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "10px");
+	
+	DRGsvg.append('text').text('Diagnosis-Related Group')
+			.attr('x', 5)
+			.attr('y', 38)
+			.attr('fill', 'black')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "8px");
+	
+	providerssvg.append('text').text('Providers Coverage')
+			.attr('x', 5)
+			.attr('y', 8)
+			.attr('fill', 'black')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "8px");
+
+			
+	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 180);
+	
+	providerssvg.append('text').text('Best Coverage')
+		.attr('x', 5)
+		.attr('y', 188)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "8px");
+		
+	providerssvg.append("rect").attr("fill", "blue").style("opacity", 0.5).attr("height", 10).attr("width", 180).attr("y", 280);
+	
+	providerssvg.append('text').text('Worst Coverage')
+		.attr('x', 5)
+		.attr('y', 288)
+		.attr('fill', 'black')
+		.attr("font-family", "sans-serif")
+		.style("font-weight","bold")
+		.attr("font-size", "8px");	
+				
+}
+
+function lineClick (e) {
 	console.log(e);
+	
+	d3.select("#hospitalline" + parseInt(e.hospitalID)).attr("stroke-width", 1).attr("stroke", "green");
+	d3.select("#hospitalcircle" + parseInt(e.hospitalID)).style("fill", "green").attr("r", 30);
+	
+	console.log("trying to reach the marked hospital from the righthandpanel:");
+	console.log(d3.select("#hospitalcircle" + parseInt(e.hospitalID)));
+	
 }

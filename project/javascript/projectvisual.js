@@ -20,7 +20,6 @@ function createLayout(mapData, countiesMap, hospitals, hospwithcoord) {
 		.on("mouseout", function(d) {
 		  d3.select(this).attr('opacity', 0.5);
 		})
-		//.on("click", stateClick);
 		.on("click", function(d) { stateClick(d, width, height, countiesMap, hospwithcoord, hospitals); });
 		
 	createHospitalCircles(hospwithcoord, hospitals);
@@ -39,9 +38,9 @@ function createLayout(mapData, countiesMap, hospitals, hospwithcoord) {
             .attr("d", path.projection(projection)); 
 
 	});
-	*/
-	//mapsvg.call(zoom)		
-		
+	
+	mapsvg.call(zoom)		
+	*/	
 			
 }
 
@@ -149,8 +148,7 @@ function countyClick(d, width, height, countiesMap, hospwithcoord, hospitals) {
 function createHospitalCircles(hospwithcoord, hospitals) {
 	g.selectAll(".hospitalcircle").remove();
 	
-	console.log("this is what hospwithcoord looks like:");
-	console.log(hospwithcoord);
+	
 	
 	//console.log(d3.select("select").property("value"));
 	//console.log("We have chosen another DRG in the menu: " + d3.select("select").property("value") + " aka " + parseInt(d3.select("select").property("value")));
@@ -171,9 +169,7 @@ function createHospitalCircles(hospwithcoord, hospitals) {
 	
 	console.log("we are displaying " + hospitalsToShow.length + " out of " + hospwithcoord.length + " hospitals");
 	
-	//d3.select("select").property("value")
-	
-	
+
 	
 	var circleradius;
 		
@@ -186,13 +182,14 @@ function createHospitalCircles(hospwithcoord, hospitals) {
 	else {
 		circleradius = 0.2;
 	}
-
+	console.log("here is hospitalsToShow");
+	console.log(hospitalsToShow);
 	g.selectAll(".hospitalcircle")
 		.data(hospitalsToShow)
 		.enter()
 			.append("circle")
 			.attr("class", "hospitalcircle")
-			//.attr("hospitalid", function(d) { return d.ID; })
+			.attr("id", function(d) { return "hospitalcircle" + d.ID; })
 			.attr("cx", function(d) {
 				   return projection([d.LNG, d.LAT])[0];
 			})
@@ -223,53 +220,63 @@ function createHospitalCircles(hospwithcoord, hospitals) {
 											d3.select(this).attr("r", (circleradius * 2.5)).style("fill", "green");
 										}		
 			})
-			.on("click", function(d) { if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
-											d3.select(this).attr("r", circleradius * 5).style("fill", "green");
-										}
-										else {
-											d3.select(this).attr("r", circleradius).style("fill", "red");
-										}									
-										hospitalClick(d, hospitals, hospitalIDs); });
+			.on("click", function(d) { hospitalClick(parseInt(d.ID), hospitals); });
+			
+	console.log("Look at all these circles!");
+	console.log(g.selectAll(".hospitalcircle"));
 		
 }
 
 
-function hospitalClick(d, hospitals) {
-	console.log(d);
+function hospitalClick(clickedID, hospitals) {
+	console.log("entering hospitalClick");
+	console.log(clickedID);
+	
 	bottomsvg.selectAll("svg > *").remove();
-	console.log(d);
 	
-	
-	if (markedHospitals.indexOf(parseInt(d.ID)) === -1) {
-		console.log("adding " + parseInt(d.ID) + " to the array");
-		markedHospitals.push(parseInt(d.ID));
+	if (markedHospitals.indexOf(clickedID) === -1) {
+		console.log("adding " + clickedID + " to the array");
+		markedHospitals.push(clickedID);
 	}
 	else {
-		console.log("removing " + parseInt(d.ID) + " from the array");
-		markedHospitals.splice(markedHospitals.indexOf(parseInt(d.ID)), 1);
-	}
-	
-	console.log("here is markedHospitals");
-	console.log(markedHospitals);
-	
-	console.log("marking::::::: ");
-	if (d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke") == "blue") {
-		console.log(d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke"));
-	}
-	else if (d3.select("#hospitalline" + parseInt(d.ID)) == null) { 
-		console.log("this node is null yo");
-	}
-	
-	if (d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke") == "blue") {
-		d3.select("#hospitalline" + parseInt(d.ID)).attr("stroke-width", 1).attr("stroke", "green");
+		console.log("removing " + clickedID + " from the array");
+		markedHospitals.splice(markedHospitals.indexOf(clickedID), 1);
 	}
 	
 	
+	var circleradius;
+		
+	if (zoomlevel == "country") {
+		circleradius = 1.5;
+	}
+	else if (zoomlevel == "state") {
+		circleradius = 0.6;
+	}	
+	else {
+		circleradius = 0.2;
+	}
+	
+	if (markedHospitals.indexOf(clickedID) === -1) {
+		d3.select("#hospitalline" + clickedID).attr("stroke-width", 0.02).attr("stroke", "red");
+		d3.select("#hospitalcircle" + clickedID).style("fill", "red").attr("r", circleradius);
+	}
+	else {
+		d3.select("#hospitalline" + clickedID).attr("stroke-width", 1).attr("stroke", "green");
+		d3.select("#hospitalcircle" + clickedID).style("fill", "green").attr("r", circleradius * 2.5);
+	}	
+	
+	
+	
+		
 	//the bottom panel displays information about the last hospital that was added to the array (and that hasnt been removed)
 	//for example, we choose in order: a, b, c, d, e. It will display information for each of them until the next one is added.
 	//then we remove b and d. now it still displays info for e. Then we remove e, and it will display info for c
 	
-	addBottomPanel(bottomsvg, hospitals, markedHospitals[markedHospitals.length - 1])
-
+	if (markedHospitals.length > 0) {
+		addBottomPanel(bottomsvg, hospitals, markedHospitals[markedHospitals.length - 1])
+	}
+	else {
+		emptyBottomPanel()
+	}
 	
 }

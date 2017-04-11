@@ -1,6 +1,5 @@
 function addBottomPanel(bottomsvg, hospitals, hospitalChoice) {
 
-
 	bottomsvg.append("line")
 		.attr("x1", 0)
 		.attr("y1", 0)
@@ -157,4 +156,46 @@ function addBottomPanel(bottomsvg, hospitals, hospitalChoice) {
 	
 	
 	//console.log(top5discharges);	
+}
+
+function emptyBottomPanel() {
+	bottomsvg.append("line")
+		.attr("x1", 0)
+		.attr("y1", 0)
+		.attr("x2", 0)
+		.attr("y2", 200)
+		.attr("stroke-width", 2)
+		.attr("stroke", "black");
+				
+	bottomsvg.append("line")
+			.attr("x1", 500)
+			.attr("y1", 0)
+			.attr("x2", 500)
+			.attr("y2", 200)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+			
+	bottomsvg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 0)
+			.attr("x2", 500)
+			.attr("y2", 0)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+			
+	bottomsvg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 200)
+			.attr("x2", 500)
+			.attr("y2", 200)
+			.attr("stroke-width", 2)
+			.attr("stroke", "black");
+		
+	bottomsvg.append('text').text("CLICK ON A HOSPITAL ON THE MAP OR IN THE RIGHT-HAND PANEL TO GET SOME INFORMATION!!!!")
+			.attr('x', 5)
+			.attr('y', 15)
+			.attr('fill', 'red')
+			.attr("font-family", "sans-serif")
+			.style("font-weight","bold")
+			.attr("font-size", "14px");
 }
